@@ -14,7 +14,6 @@ export default function Index() {
     error,
     createRoom,
     joinRoom,
-    readyUp,
     startGame,
     passCards,
     makeSet,
@@ -101,7 +100,6 @@ export default function Index() {
         return (
           <GameLobby
             gameState={gameState}
-            onReadyUp={readyUp}
             onStartGame={startGame}
             onLeaveRoom={leaveRoom}
           />
