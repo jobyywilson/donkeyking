@@ -234,11 +234,11 @@ export function GameBoard({
             </h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div className="space-y-2">
-                <div>• Select cards by clicking them</div>
-                <div>• Pass 1 card on your turn</div>
+                <div>• Click to select a card</div>
+                <div>• Drag cards to center table</div>
               </div>
               <div className="space-y-2">
-                <div>• Make sets of 4 same-rank cards</div>
+                <div>• Play one card per turn</div>
                 <div>• First to empty hand wins!</div>
               </div>
             </div>
