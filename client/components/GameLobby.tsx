@@ -9,14 +9,12 @@ import { cn } from "@/lib/utils";
 
 interface GameLobbyProps {
   gameState: GameState;
-  onReadyUp: () => void;
   onStartGame: () => void;
   onLeaveRoom: () => void;
 }
 
 export function GameLobby({
   gameState,
-  onReadyUp,
   onStartGame,
   onLeaveRoom,
 }: GameLobbyProps) {
