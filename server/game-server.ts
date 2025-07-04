@@ -282,20 +282,43 @@ export class GameServer {
     );
   }
 
-  private passCards(socket: any, cardIds: string[]): void {
+  private playCard(socket: any, cardId: string): void {
     const room = this.rooms.get(socket.roomId);
     if (!room || room.gameState !== "playing") return;
 
     const currentPlayer = room.players.find((p) => p.id === socket.id);
-    if (!currentPlayer?.isCurrentTurn) return;
-
-    // In Indian Donkey, typically pass 1 card to the next player
-    if (cardIds.length !== 1) {
+    if (!currentPlayer?.isCurrentTurn) {
       this.sendToSocket(socket, {
         type: "ERROR",
-        payload: { message: "You can only pass 1 card" },
+        payload: { message: "Not your turn!" },
       });
       return;
+    }
+
+    // Get player's cards (stored separately for security)
+    const playerCards = this.getPlayerCards(room, socket.id);
+    const cardToPlay = playerCards.find((card) => card.id === cardId);
+
+    if (!cardToPlay) {
+      this.sendToSocket(socket, {
+        type: "ERROR",
+        payload: { message: "Card not found in your hand" },
+      });
+      return;
+    }
+
+    // Remove card from player's hand
+    this.removeCardFromPlayer(room, socket.id, cardId);
+    currentPlayer.cardCount--;
+
+    // Add card to center table
+    room.currentTrick.push(cardToPlay);
+
+    // Check if trick is complete (4 cards played)
+    if (room.currentTrick.length === 4) {
+      // Move trick to center cards
+      room.centerCards.push(...room.currentTrick);
+      room.currentTrick = [];
     }
 
     // Move to next player's turn
@@ -307,7 +330,21 @@ export class GameServer {
       p.isCurrentTurn = index === room.currentPlayerIndex;
     });
 
+    // Check for win condition (player has no cards left)
+    if (currentPlayer.cardCount === 0) {
+      room.gameState = "finished";
+      room.winner = currentPlayer.id;
+    }
+
     this.broadcastGameStateUpdate(room);
+  }
+
+  private passCards(socket: any, cardIds: string[]): void {
+    // Deprecated - replaced with playCard
+    this.sendToSocket(socket, {
+      type: "ERROR",
+      payload: { message: "Card passing not available in this game mode" },
+    });
   }
 
   private makeSet(socket: any, cardIds: string[]): void {
