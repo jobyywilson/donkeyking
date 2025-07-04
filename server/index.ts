@@ -1,9 +1,15 @@
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { createServer as createHTTPServer } from "http";
+import { GameServer } from "./game-server";
 
 export function createServer() {
   const app = express();
+  const httpServer = createHTTPServer(app);
+
+  // Initialize game server with WebSocket support
+  new GameServer(httpServer);
 
   // Middleware
   app.use(cors());
@@ -17,5 +23,5 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
-  return app;
+  return httpServer;
 }
