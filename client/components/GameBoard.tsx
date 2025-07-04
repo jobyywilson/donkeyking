@@ -184,21 +184,37 @@ export function GameBoard({
           {myCards.length > 0 ? (
             <div className="flex flex-wrap gap-3 justify-center">
               {myCards.map((card) => (
-                <PlayingCard
+                <div
                   key={card.id}
-                  card={{
-                    ...card,
-                    faceUp: true,
-                    selected: selectedCards.includes(card.id),
+                  draggable={myPlayer?.isCurrentTurn}
+                  onDragStart={(e) => {
+                    if (myPlayer?.isCurrentTurn) {
+                      e.dataTransfer.setData("text/plain", card.id);
+                    }
                   }}
-                  onClick={() => handleCardClick(card.id)}
-                  size="md"
                   className={cn(
                     "transition-all duration-200",
-                    selectedCards.includes(card.id) &&
-                      "ring-2 ring-primary ring-offset-2 scale-105",
+                    myPlayer?.isCurrentTurn &&
+                      "cursor-grab active:cursor-grabbing",
+                    selectedCard === card.id && "transform scale-105",
                   )}
-                />
+                >
+                  <PlayingCard
+                    card={{
+                      ...card,
+                      faceUp: true,
+                      selected: selectedCard === card.id,
+                    }}
+                    onClick={() => handleCardClick(card.id)}
+                    size="md"
+                    className={cn(
+                      "transition-all duration-200",
+                      selectedCard === card.id &&
+                        "ring-2 ring-primary ring-offset-2",
+                      !myPlayer?.isCurrentTurn && "opacity-75 grayscale",
+                    )}
+                  />
+                </div>
               ))}
             </div>
           ) : (
