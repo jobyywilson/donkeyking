@@ -22,7 +22,7 @@ export function GameLobby({
   const { room, myId } = gameState;
   const myPlayer = room.players.find((p) => p.id === myId);
   const isHost = myPlayer?.isHost;
-  const canStart = isHost && room.players.length >= 2;
+  const canStart = isHost && room.players.length === 4;
 
   const copyRoomLink = async () => {
     const link = `${window.location.origin}/?room=${room.id}`;
@@ -171,7 +171,8 @@ export function GameLobby({
       {!canStart && isHost && (
         <div className="text-center mt-4">
           <p className="text-sm text-muted-foreground">
-            Need at least 2 players to start the game
+            Need exactly 4 players to start the game ({room.players.length}/4
+            joined)
           </p>
         </div>
       )}
