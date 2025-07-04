@@ -57,29 +57,9 @@ export function useGameSocket() {
         break;
 
       case "PLAYER_JOINED":
-        if (gameState) {
-          setGameState({
-            ...gameState,
-            room: {
-              ...gameState.room,
-              players: [...gameState.room.players, response.payload.player],
-            },
-          });
-        }
-        break;
-
       case "PLAYER_LEFT":
-        if (gameState) {
-          setGameState({
-            ...gameState,
-            room: {
-              ...gameState.room,
-              players: gameState.room.players.filter(
-                (p) => p.id !== response.payload.playerId,
-              ),
-            },
-          });
-        }
+        // These events are now handled by GAME_STATE_UPDATE
+        console.log("Player list change:", response.type);
         break;
 
       case "GAME_FINISHED":
