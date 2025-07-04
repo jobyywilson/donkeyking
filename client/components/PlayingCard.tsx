@@ -28,6 +28,7 @@ interface PlayingCardProps {
   onClick?: () => void;
   className?: string;
   size?: "sm" | "md" | "lg";
+  style?: React.CSSProperties;
 }
 
 const suitSymbols: Record<Suit, string> = {
@@ -55,6 +56,7 @@ export function PlayingCard({
   onClick,
   className,
   size = "md",
+  style,
 }: PlayingCardProps) {
   const isRed = card.suit === "hearts" || card.suit === "diamonds";
 
@@ -67,6 +69,7 @@ export function PlayingCard({
           className,
         )}
         onClick={onClick}
+        style={style}
       >
         <div className="w-full h-full rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg border border-blue-500 flex items-center justify-center">
           <div className="text-white font-bold text-xs opacity-60">🂠</div>
@@ -84,6 +87,7 @@ export function PlayingCard({
         className,
       )}
       onClick={onClick}
+      style={style}
     >
       <div className="w-full h-full rounded-lg bg-white shadow-lg border border-gray-200 flex flex-col justify-between p-2">
         {/* Top left rank and suit */}
