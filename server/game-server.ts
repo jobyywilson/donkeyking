@@ -91,7 +91,7 @@ export class GameServer {
       players: [player],
       gameState: "waiting",
       currentPlayerIndex: 0,
-      maxPlayers: 6,
+      maxPlayers: 4,
       createdAt: new Date(),
     };
 
@@ -199,10 +199,10 @@ export class GameServer {
     const player = room.players.find((p) => p.id === socket.id);
     if (!player?.isHost) return;
 
-    if (room.players.length < 2) {
+    if (room.players.length !== 4) {
       this.sendToSocket(socket, {
         type: "ERROR",
-        payload: { message: "Need at least 2 players to start" },
+        payload: { message: "Need exactly 4 players to start" },
       });
       return;
     }
