@@ -146,25 +146,6 @@ export function GameLobby({
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button
-          onClick={onReadyUp}
-          variant={myPlayer?.isReady ? "outline" : "default"}
-          size="lg"
-          className="flex items-center gap-2"
-        >
-          {myPlayer?.isReady ? (
-            <>
-              <Clock className="w-5 h-5" />
-              Cancel Ready
-            </>
-          ) : (
-            <>
-              <Check className="w-5 h-5" />
-              Ready Up
-            </>
-          )}
-        </Button>
-
         {isHost && (
           <Button
             onClick={onStartGame}
@@ -190,9 +171,7 @@ export function GameLobby({
       {!canStart && isHost && (
         <div className="text-center mt-4">
           <p className="text-sm text-muted-foreground">
-            {room.players.length < 2
-              ? "Need at least 2 players to start"
-              : "All players must be ready to start"}
+            Need at least 2 players to start the game
           </p>
         </div>
       )}
