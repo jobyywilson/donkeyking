@@ -224,7 +224,7 @@ export class GameServer {
 
     // Create and shuffle deck
     const deck = this.createDeck();
-    const cardsPerPlayer = Math.floor(52 / room.players.length);
+    const cardsPerPlayer = 13; // Exactly 13 cards per player for 4 players
 
     console.log(
       `Dealing ${cardsPerPlayer} cards to each of ${room.players.length} players`,
