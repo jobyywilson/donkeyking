@@ -109,6 +109,7 @@ export function useGameSocket() {
   };
 
   const createRoom = (playerName: string) => {
+    console.log("Creating room for player:", playerName);
     sendMessage({ type: "CREATE_ROOM", payload: { playerName } });
   };
 
