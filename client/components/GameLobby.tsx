@@ -95,17 +95,10 @@ export function GameLobby({
               </div>
 
               <div className="flex items-center gap-2">
-                {player.isReady ? (
-                  <Badge variant="default" className="bg-green-500">
-                    <Check className="w-3 h-3 mr-1" />
-                    Ready
-                  </Badge>
-                ) : (
-                  <Badge variant="outline">
-                    <Clock className="w-3 h-3 mr-1" />
-                    Waiting
-                  </Badge>
-                )}
+                <Badge variant="outline" className="bg-green-50">
+                  <Check className="w-3 h-3 mr-1" />
+                  Joined
+                </Badge>
               </div>
             </div>
           ))}
