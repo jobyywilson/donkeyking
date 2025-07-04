@@ -377,8 +377,21 @@ export class GameServer {
       const playerSocket = this.io.sockets.sockets.get(player.id);
       if (playerSocket) {
         const gameState: GameState = {
-          room,
-          myCards: [], // Cards are sent separately for security
+          room: {
+            ...room,
+            // Only show public player information
+            players: room.players.map((p) => ({
+              id: p.id,
+              name: p.name,
+              cardCount: p.cardCount,
+              isReady: p.isReady,
+              isHost: p.isHost,
+              isCurrentTurn: p.isCurrentTurn,
+              sets: p.sets, // Sets are public information
+              isConnected: p.isConnected,
+            })),
+          },
+          myCards: [], // Cards are kept private and not sent in updates
           myId: player.id,
           selectedCards: [],
           canPass: player.isCurrentTurn,
