@@ -169,10 +169,8 @@ export class GameServer {
       payload: gameState,
     });
 
-    this.broadcastToRoom(roomId, {
-      type: "PLAYER_JOINED",
-      payload: { player },
-    });
+    // Update all players in the room with the new player list
+    this.broadcastGameStateToRoom(roomId);
   }
 
   private readyUp(socket: any): void {
