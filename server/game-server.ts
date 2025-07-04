@@ -220,6 +220,8 @@ export class GameServer {
   private initializeGame(room: GameRoom): void {
     room.gameState = "playing";
     room.currentPlayerIndex = 0;
+    room.centerCards = [];
+    room.currentTrick = [];
 
     // Reset all players' turn status
     room.players.forEach((player, index) => {
