@@ -216,25 +216,51 @@ export class GameServer {
   private initializeGame(room: GameRoom): void {
     room.gameState = "playing";
     room.currentPlayerIndex = 0;
-    room.players[0].isCurrentTurn = true;
 
+    // Reset all players' turn status
+    room.players.forEach((player, index) => {
+      player.isCurrentTurn = index === 0;
+      player.sets = [];
+    });
+
+    // Create and shuffle deck
     const deck = this.createDeck();
     const cardsPerPlayer = Math.floor(52 / room.players.length);
 
+    console.log(
+      `Dealing ${cardsPerPlayer} cards to each of ${room.players.length} players`,
+    );
+
+    // Store each player's cards separately for security
+    const playerCards: Map<string, Card[]> = new Map();
+
     // Deal cards to each player
     for (let i = 0; i < room.players.length; i++) {
-      const playerCards = deck.splice(0, cardsPerPlayer);
-      room.players[i].cardCount = playerCards.length;
+      const cards = deck.splice(0, cardsPerPlayer);
+      playerCards.set(room.players[i].id, cards);
+      room.players[i].cardCount = cards.length;
 
-      // Send cards to each player individually
-      const playerSocket = this.io.sockets.sockets.get(room.players[i].id);
+      console.log(`Player ${room.players[i].name} dealt ${cards.length} cards`);
+    }
+
+    // Send game state to each player individually with their own cards
+    room.players.forEach((player, index) => {
+      const playerSocket = this.io.sockets.sockets.get(player.id);
       if (playerSocket) {
         const gameState: GameState = {
-          room,
-          myCards: playerCards,
-          myId: room.players[i].id,
+          room: {
+            ...room,
+            // Don't send other players' detailed info
+            players: room.players.map((p) => ({
+              ...p,
+              // Only show card count for other players, not actual cards
+              sets: p.id === player.id ? p.sets : p.sets,
+            })),
+          },
+          myCards: playerCards.get(player.id) || [],
+          myId: player.id,
           selectedCards: [],
-          canPass: i === 0,
+          canPass: index === 0, // Only first player can pass initially
           passDirection: "left",
         };
 
@@ -243,7 +269,11 @@ export class GameServer {
           payload: gameState,
         });
       }
-    }
+    });
+
+    console.log(
+      `Game started in room ${room.id} with ${room.players.length} players`,
+    );
   }
 
   private passCards(socket: any, cardIds: string[]): void {
