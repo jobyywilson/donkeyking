@@ -500,6 +500,35 @@ export class GameServer {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
   }
 
+  private playerCardStorage: Map<string, Map<string, Card[]>> = new Map();
+
+  private getPlayerCards(room: GameRoom, playerId: string): Card[] {
+    const roomCards = this.playerCardStorage.get(room.id);
+    if (!roomCards) return [];
+    return roomCards.get(playerId) || [];
+  }
+
+  private setPlayerCards(
+    room: GameRoom,
+    playerId: string,
+    cards: Card[],
+  ): void {
+    if (!this.playerCardStorage.has(room.id)) {
+      this.playerCardStorage.set(room.id, new Map());
+    }
+    this.playerCardStorage.get(room.id)!.set(playerId, cards);
+  }
+
+  private removeCardFromPlayer(
+    room: GameRoom,
+    playerId: string,
+    cardId: string,
+  ): void {
+    const playerCards = this.getPlayerCards(room, playerId);
+    const updatedCards = playerCards.filter((card) => card.id !== cardId);
+    this.setPlayerCards(room, playerId, updatedCards);
+  }
+
   private createDeck(): Card[] {
     const suits: Card["suit"][] = ["hearts", "diamonds", "clubs", "spades"];
     const ranks: Card["rank"][] = [
