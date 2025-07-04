@@ -18,23 +18,36 @@ export function useGameSocket() {
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("Connected to game server");
+      console.log("✅ Connected to game server", socket.id);
       setIsConnected(true);
+      setError(null);
     });
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from game server");
+    socket.on("disconnect", (reason) => {
+      console.log("❌ Disconnected from game server:", reason);
       setIsConnected(false);
     });
 
     socket.on("message", (response: SocketResponse) => {
-      console.log("Received:", response);
+      console.log("📨 Received:", response);
       handleSocketResponse(response);
     });
 
     socket.on("connect_error", (error) => {
-      console.error("Connection error:", error);
-      setError("Failed to connect to game server");
+      console.error("🚫 Connection error:", error);
+      setError(`Connection failed: ${error.message}`);
+      setIsConnected(false);
+    });
+
+    socket.on("reconnect", (attemptNumber) => {
+      console.log("🔄 Reconnected after", attemptNumber, "attempts");
+      setIsConnected(true);
+      setError(null);
+    });
+
+    socket.on("reconnect_error", (error) => {
+      console.error("🔄❌ Reconnection error:", error);
+      setError("Reconnection failed");
     });
 
     return () => {
