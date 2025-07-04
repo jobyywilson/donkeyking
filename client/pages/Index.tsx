@@ -138,9 +138,9 @@ export default function Index() {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <ConnectionStatus />
       {renderGameState()}
-    </>
+    </ErrorBoundary>
   );
 }
