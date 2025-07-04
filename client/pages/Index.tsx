@@ -68,7 +68,9 @@ export default function Index() {
 
   const handlePlayAgain = () => {
     // Reset to lobby state to start a new game
-    if (gameState?.room.players.find((p) => p.id === gameState.myId)?.isHost) {
+    if (
+      gameState?.room?.players?.find((p) => p.id === gameState.myId)?.isHost
+    ) {
       // Host can start new game in same room
       window.location.reload();
     } else {
