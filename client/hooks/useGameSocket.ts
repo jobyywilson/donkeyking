@@ -12,6 +12,8 @@ export function useGameSocket() {
     // Connect to the WebSocket server
     const socket = io(window.location.origin, {
       path: "/socket.io",
+      transports: ["websocket", "polling"],
+      timeout: 5000,
     });
     socketRef.current = socket;
 
