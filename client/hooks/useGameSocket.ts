@@ -103,8 +103,12 @@ export function useGameSocket() {
   };
 
   const sendMessage = (event: SocketEvent) => {
+    console.log("Sending message:", event);
     if (socketRef.current?.connected) {
       socketRef.current.emit("message", event);
+    } else {
+      console.error("Socket not connected, cannot send message");
+      setError("Not connected to game server");
     }
   };
 
