@@ -24,43 +24,29 @@ export function GameBoard({
   const currentPlayer = room.players[room.currentPlayerIndex];
 
   const handleCardClick = (cardId: string) => {
-    setSelectedCards((prev) => {
-      if (prev.includes(cardId)) {
-        return prev.filter((id) => id !== cardId);
-      } else {
-        return [...prev, cardId];
-      }
-    });
-  };
+    if (!myPlayer?.isCurrentTurn) return;
 
-  const handlePassCard = () => {
-    if (selectedCards.length === 1 && canPass) {
-      onPassCards(selectedCards);
-      setSelectedCards([]);
+    if (selectedCard === cardId) {
+      // Deselect if clicking the same card
+      setSelectedCard(null);
+    } else {
+      // Select the card
+      setSelectedCard(cardId);
     }
   };
 
-  const handleMakeSet = () => {
-    if (selectedCards.length === 4) {
-      // Validate that all cards have the same rank
-      const selectedCardObjects = myCards.filter((card) =>
-        selectedCards.includes(card.id),
-      );
-      const ranks = selectedCardObjects.map((card) => card.rank);
-      const uniqueRanks = new Set(ranks);
-
-      if (uniqueRanks.size === 1) {
-        onMakeSet(selectedCards);
-        setSelectedCards([]);
-      } else {
-        alert("All cards in a set must have the same rank!");
-      }
+  const handlePlayCard = () => {
+    if (selectedCard && myPlayer?.isCurrentTurn) {
+      onPlayCard(selectedCard);
+      setSelectedCard(null);
     }
   };
 
-  const getNextPlayerName = () => {
-    const nextIndex = (room.currentPlayerIndex + 1) % room.players.length;
-    return room.players[nextIndex]?.name || "Next Player";
+  const handleCardDrop = (cardId: string) => {
+    if (myPlayer?.isCurrentTurn) {
+      onPlayCard(cardId);
+      setSelectedCard(null);
+    }
   };
 
   return (
