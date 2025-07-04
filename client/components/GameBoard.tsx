@@ -61,11 +61,13 @@ export function GameBoard({
             <div className="flex items-center gap-2">
               <Badge variant="outline">Room: {room.id}</Badge>
               <Badge
-                variant={canPass ? "default" : "secondary"}
+                variant={myPlayer?.isCurrentTurn ? "default" : "secondary"}
                 className="flex items-center gap-1"
               >
                 <Hand className="w-3 h-3" />
-                {canPass ? "Your Turn" : `${currentPlayer.name}'s Turn`}
+                {myPlayer?.isCurrentTurn
+                  ? "Your Turn"
+                  : `${currentPlayer.name}'s Turn`}
               </Badge>
             </div>
           </div>
