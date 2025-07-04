@@ -404,6 +404,42 @@ export class GameServer {
     });
   }
 
+  private broadcastGameStateToRoom(roomId: string): void {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    room.players.forEach((player) => {
+      const playerSocket = this.io.sockets.sockets.get(player.id);
+      if (playerSocket) {
+        const gameState: GameState = {
+          room: {
+            ...room,
+            players: room.players.map((p) => ({
+              id: p.id,
+              name: p.name,
+              cardCount: p.cardCount,
+              isReady: p.isReady,
+              isHost: p.isHost,
+              isCurrentTurn: p.isCurrentTurn,
+              sets: p.sets,
+              isConnected: p.isConnected,
+            })),
+          },
+          myCards: [], // Cards are not included in lobby updates
+          myId: player.id,
+          selectedCards: [],
+          canPass: false,
+          passDirection: "left",
+        };
+
+        this.sendToSocket(playerSocket, {
+          type: "GAME_STATE_UPDATE",
+          payload: gameState,
+        });
+      }
+    });
+  }
+
   private broadcastToRoom(roomId: string, message: SocketResponse): void {
     this.io.to(roomId).emit("message", message);
   }
