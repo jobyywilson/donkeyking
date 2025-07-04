@@ -15,8 +15,7 @@ export default function Index() {
     createRoom,
     joinRoom,
     startGame,
-    passCards,
-    makeSet,
+    playCard,
     leaveRoom,
   } = useGameSocket();
 
@@ -109,8 +108,7 @@ export default function Index() {
         return (
           <GameBoard
             gameState={gameState}
-            onPassCards={passCards}
-            onMakeSet={makeSet}
+            onPlayCard={playCard}
             onLeaveRoom={leaveRoom}
           />
         );
