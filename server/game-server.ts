@@ -182,7 +182,7 @@ export class GameServer {
 
     player.isReady = !player.isReady;
 
-    this.broadcastGameStateUpdate(room);
+    this.broadcastGameStateToRoom(socket.roomId);
   }
 
   private startGame(socket: any): void {
