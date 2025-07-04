@@ -424,6 +424,7 @@ export class GameServer {
     ];
     const deck: Card[] = [];
 
+    // Create all 52 cards
     for (const suit of suits) {
       for (const rank of ranks) {
         deck.push({
@@ -434,12 +435,13 @@ export class GameServer {
       }
     }
 
-    // Shuffle deck
+    // Shuffle deck thoroughly using Fisher-Yates algorithm
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
     }
 
+    console.log(`Created and shuffled deck of ${deck.length} cards`);
     return deck;
   }
 }
