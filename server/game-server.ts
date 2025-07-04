@@ -356,9 +356,15 @@ export class GameServer {
         if (room.players.length === 0) {
           this.rooms.delete(roomId);
         } else {
-          // If host left, make someone else host
-          if (!room.players.some((p) => p.isHost)) {
+          // If the host left, make the first remaining player the new host
+          const currentHost = room.players.find((p) => p.isHost);
+          if (!currentHost) {
+            // Clear any incorrect host flags and assign to first player
+            room.players.forEach((p) => (p.isHost = false));
             room.players[0].isHost = true;
+            console.log(
+              `New host assigned: ${room.players[0].name} in room ${roomId}`,
+            );
           }
 
           this.broadcastGameStateToRoom(roomId);
