@@ -237,13 +237,10 @@ export class GameServer {
       `Dealing ${cardsPerPlayer} cards to each of ${room.players.length} players`,
     );
 
-    // Store each player's cards separately for security
-    const playerCards: Map<string, Card[]> = new Map();
-
-    // Deal cards to each player
+    // Deal cards to each player using storage system
     for (let i = 0; i < room.players.length; i++) {
       const cards = deck.splice(0, cardsPerPlayer);
-      playerCards.set(room.players[i].id, cards);
+      this.setPlayerCards(room, room.players[i].id, cards);
       room.players[i].cardCount = cards.length;
 
       console.log(`Player ${room.players[i].name} dealt ${cards.length} cards`);
@@ -256,17 +253,15 @@ export class GameServer {
         const gameState: GameState = {
           room: {
             ...room,
-            // Don't send other players' detailed info
             players: room.players.map((p) => ({
               ...p,
-              // Only show card count for other players, not actual cards
               sets: p.id === player.id ? p.sets : p.sets,
             })),
           },
-          myCards: playerCards.get(player.id) || [],
+          myCards: this.getPlayerCards(room, player.id),
           myId: player.id,
           selectedCards: [],
-          canPass: index === 0, // Only first player can pass initially
+          canPass: index === 0,
           passDirection: "left",
         };
 
