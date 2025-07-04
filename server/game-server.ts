@@ -468,7 +468,7 @@ export class GameServer {
               isConnected: p.isConnected,
             })),
           },
-          myCards: [], // Cards are not included in lobby updates
+          myCards: this.getPlayerCards(room, player.id), // Send actual player cards
           myId: player.id,
           selectedCards: [],
           canPass: false,
