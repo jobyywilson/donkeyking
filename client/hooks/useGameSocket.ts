@@ -45,9 +45,14 @@ export function useGameSocket() {
 
     switch (response.type) {
       case "ROOM_CREATED":
+        console.log("Room created successfully:", response.payload);
+        setGameState(response.payload.gameState);
+        break;
+
       case "ROOM_JOINED":
       case "GAME_STARTED":
       case "GAME_STATE_UPDATE":
+        console.log("Game state updated:", response.type, response.payload);
         setGameState(response.payload);
         break;
 
