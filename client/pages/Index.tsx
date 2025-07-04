@@ -83,7 +83,7 @@ export default function Index() {
 
   // Render appropriate component based on game state
   const renderGameState = () => {
-    if (!gameState) {
+    if (!gameState || !gameState.room) {
       return (
         <HomePage
           onCreateRoom={createRoom}
