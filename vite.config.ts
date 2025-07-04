@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/api": "http://localhost:3001",
+      "/socket.io": {
+        target: "http://localhost:3001",
+        ws: true,
+      },
+    },
   },
   build: {
     outDir: "dist/spa",
@@ -24,18 +31,15 @@ export default defineConfig(({ mode }) => ({
 function expressPlugin(): Plugin {
   return {
     name: "express-plugin",
-    apply: "serve", // Only apply during development (serve mode)
-    configureServer(server) {
+    apply: "serve",
+    configureServer() {
+      // Start the Express server on a different port
       const httpServer = createServer();
+      const port = 3001;
 
-      // Add Express app as middleware to Vite dev server
-      server.middlewares.use("/api", httpServer);
-
-      // For Socket.io, we need to handle the HTTP server upgrade
-      server.httpServer?.on("upgrade", (request, socket, head) => {
-        if (httpServer && "upgrade" in httpServer) {
-          httpServer.emit("upgrade", request, socket, head);
-        }
+      httpServer.listen(port, () => {
+        console.log(`🚀 Express server running on port ${port}`);
+        console.log(`🎮 Game server ready with WebSocket support`);
       });
     },
   };
