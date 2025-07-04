@@ -104,35 +104,73 @@ export function GameBoard({
           </div>
         </Card>
 
-        {/* Action Buttons */}
-        {canPass && (
+        {/* Center Table */}
+        <Card className="p-6 mb-6 bg-green-100 backdrop-blur-sm border-2 border-dashed border-green-400">
+          <h3 className="text-lg font-semibold mb-4 text-center text-green-800">
+            Center Table
+          </h3>
+
+          {/* Current Trick */}
+          {room.currentTrick && room.currentTrick.length > 0 && (
+            <div className="mb-4">
+              <h4 className="text-sm font-medium text-green-700 mb-2 text-center">
+                Current Trick
+              </h4>
+              <div className="flex justify-center gap-2 flex-wrap">
+                {room.currentTrick.map((card, index) => (
+                  <PlayingCard
+                    key={card.id}
+                    card={{ ...card, faceUp: true }}
+                    size="sm"
+                    className="transform rotate-12"
+                    style={{ transform: `rotate(${index * 15 - 20}deg)` }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Drop Zone */}
+          <div
+            className={cn(
+              "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
+              myPlayer?.isCurrentTurn
+                ? "border-green-500 bg-green-50 hover:bg-green-100"
+                : "border-gray-300 bg-gray-50",
+            )}
+            onDrop={(e) => {
+              e.preventDefault();
+              const cardId = e.dataTransfer.getData("text/plain");
+              if (cardId) handleCardDrop(cardId);
+            }}
+            onDragOver={(e) => e.preventDefault()}
+          >
+            {myPlayer?.isCurrentTurn ? (
+              <div className="text-green-700">
+                <Hand className="w-8 h-8 mx-auto mb-2" />
+                <p className="font-medium">Your Turn!</p>
+                <p className="text-sm">Drag a card here or click to play</p>
+              </div>
+            ) : (
+              <div className="text-gray-500">
+                <p>Waiting for {currentPlayer.name}'s turn...</p>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Action Button */}
+        {myPlayer?.isCurrentTurn && selectedCard && (
           <Card className="p-4 mb-6 bg-white/90 backdrop-blur-sm">
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex justify-center">
               <Button
-                onClick={handlePassCard}
-                disabled={selectedCards.length !== 1}
+                onClick={handlePlayCard}
                 className="flex items-center gap-2"
               >
                 <ArrowRight className="w-4 h-4" />
-                Pass Card to {getNextPlayerName()}
-              </Button>
-
-              <Button
-                onClick={handleMakeSet}
-                disabled={selectedCards.length !== 4}
-                variant="secondary"
-                className="flex items-center gap-2"
-              >
-                <Users className="w-4 h-4" />
-                Make Set (4 cards)
+                Play Selected Card
               </Button>
             </div>
-
-            {selectedCards.length > 0 && (
-              <div className="text-center mt-2 text-sm text-muted-foreground">
-                {selectedCards.length} card(s) selected
-              </div>
-            )}
           </Card>
         )}
 
