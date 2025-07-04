@@ -37,6 +37,8 @@ export interface GameRoom {
   donkey?: string;
   maxPlayers: number;
   createdAt: Date;
+  centerCards: Card[];
+  currentTrick: Card[];
 }
 
 export interface GameState {
@@ -53,7 +55,7 @@ export type SocketEvent =
   | { type: "CREATE_ROOM"; payload: { playerName: string } }
   | { type: "READY_UP"; payload: {} }
   | { type: "START_GAME"; payload: {} }
-  | { type: "SELECT_CARD"; payload: { cardId: string } }
+  | { type: "PLAY_CARD"; payload: { cardId: string } }
   | { type: "PASS_CARDS"; payload: { cardIds: string[] } }
   | { type: "MAKE_SET"; payload: { cardIds: string[] } }
   | { type: "LEAVE_ROOM"; payload: {} };
