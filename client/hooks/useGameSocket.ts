@@ -125,6 +125,11 @@ export function useGameSocket() {
     sendMessage({ type: "START_GAME", payload: {} });
   };
 
+  const playCard = (cardId: string) => {
+    console.log("Playing card:", cardId);
+    sendMessage({ type: "PLAY_CARD", payload: { cardId } });
+  };
+
   const passCards = (cardIds: string[]) => {
     sendMessage({ type: "PASS_CARDS", payload: { cardIds } });
   };
@@ -145,6 +150,7 @@ export function useGameSocket() {
     joinRoom,
     readyUp,
     startGame,
+    playCard,
     passCards,
     makeSet,
     leaveRoom,
