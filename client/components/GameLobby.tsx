@@ -22,8 +22,7 @@ export function GameLobby({
   const { room, myId } = gameState;
   const myPlayer = room.players.find((p) => p.id === myId);
   const isHost = myPlayer?.isHost;
-  const canStart =
-    isHost && room.players.length >= 2 && room.players.every((p) => p.isReady);
+  const canStart = isHost && room.players.length >= 2;
 
   const copyRoomLink = async () => {
     const link = `${window.location.origin}/?room=${room.id}`;
