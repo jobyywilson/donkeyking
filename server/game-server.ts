@@ -140,12 +140,26 @@ export class GameServer {
       return;
     }
 
+    // Check if this player is rejoining (same name)
+    const existingPlayer = room.players.find((p) => p.name === playerName);
+    let isHost = false;
+
+    if (existingPlayer) {
+      // Player is rejoining - preserve their host status
+      isHost = existingPlayer.isHost;
+      // Remove the old entry
+      room.players = room.players.filter((p) => p.name !== playerName);
+    } else {
+      // New player - only make host if no current host exists
+      isHost = !room.players.some((p) => p.isHost);
+    }
+
     const player: Player = {
       id: socket.id,
       name: playerName,
       cardCount: 0,
       isReady: false,
-      isHost: false,
+      isHost: isHost,
       isCurrentTurn: false,
       sets: [],
       isConnected: true,
