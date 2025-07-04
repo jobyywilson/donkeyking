@@ -432,7 +432,7 @@ export class GameServer {
               isConnected: p.isConnected,
             })),
           },
-          myCards: [], // Cards are kept private and not sent in updates
+          myCards: this.getPlayerCards(room, player.id), // Send actual player cards
           myId: player.id,
           selectedCards: [],
           canPass: player.isCurrentTurn,
