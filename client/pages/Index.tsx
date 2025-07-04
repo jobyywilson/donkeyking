@@ -3,6 +3,7 @@ import { HomePage } from "@/components/HomePage";
 import { GameLobby } from "@/components/GameLobby";
 import { GameBoard } from "@/components/GameBoard";
 import { GameOver } from "@/components/GameOver";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Card } from "@/components/ui/card";
 import { AlertCircle, Wifi, WifiOff } from "lucide-react";
 
