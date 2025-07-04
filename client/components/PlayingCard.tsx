@@ -69,7 +69,7 @@ export function PlayingCard({
         onClick={onClick}
       >
         <div className="w-full h-full rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg border border-blue-500 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full bg-blue-400 opacity-30" />
+          <div className="text-white font-bold text-xs opacity-60">🂠</div>
         </div>
       </div>
     );
