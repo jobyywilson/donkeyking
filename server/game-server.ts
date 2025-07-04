@@ -61,6 +61,9 @@ export class GameServer {
       case "START_GAME":
         this.startGame(socket);
         break;
+      case "PLAY_CARD":
+        this.playCard(socket, event.payload.cardId);
+        break;
       case "PASS_CARDS":
         this.passCards(socket, event.payload.cardIds);
         break;
@@ -93,6 +96,8 @@ export class GameServer {
       currentPlayerIndex: 0,
       maxPlayers: 4,
       createdAt: new Date(),
+      centerCards: [],
+      currentTrick: [],
     };
 
     this.rooms.set(roomId, room);
