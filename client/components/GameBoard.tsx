@@ -9,19 +9,17 @@ import { cn } from "@/lib/utils";
 
 interface GameBoardProps {
   gameState: GameState;
-  onPassCards: (cardIds: string[]) => void;
-  onMakeSet: (cardIds: string[]) => void;
+  onPlayCard: (cardId: string) => void;
   onLeaveRoom: () => void;
 }
 
 export function GameBoard({
   gameState,
-  onPassCards,
-  onMakeSet,
+  onPlayCard,
   onLeaveRoom,
 }: GameBoardProps) {
-  const [selectedCards, setSelectedCards] = useState<string[]>([]);
-  const { room, myCards, myId, canPass } = gameState;
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const { room, myCards, myId } = gameState;
   const myPlayer = room.players.find((p) => p.id === myId);
   const currentPlayer = room.players[room.currentPlayerIndex];
 
