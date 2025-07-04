@@ -188,15 +188,8 @@ export class GameServer {
   }
 
   private readyUp(socket: any): void {
-    const room = this.rooms.get(socket.roomId);
-    if (!room) return;
-
-    const player = room.players.find((p) => p.id === socket.id);
-    if (!player) return;
-
-    player.isReady = !player.isReady;
-
-    this.broadcastGameStateToRoom(socket.roomId);
+    // Ready up functionality removed - players can start immediately when host decides
+    console.log("Ready up request ignored - functionality removed");
   }
 
   private startGame(socket: any): void {
@@ -214,13 +207,7 @@ export class GameServer {
       return;
     }
 
-    if (!room.players.every((p) => p.isReady)) {
-      this.sendToSocket(socket, {
-        type: "ERROR",
-        payload: { message: "All players must be ready" },
-      });
-      return;
-    }
+    // No ready requirement - host can start with any number of players >= 2
 
     this.initializeGame(room);
   }
