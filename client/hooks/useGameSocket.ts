@@ -10,7 +10,9 @@ export function useGameSocket() {
 
   useEffect(() => {
     // Connect to the WebSocket server
-    const socket = io(window.location.origin);
+    const socket = io(window.location.origin, {
+      path: "/socket.io",
+    });
     socketRef.current = socket;
 
     socket.on("connect", () => {
