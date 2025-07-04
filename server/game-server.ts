@@ -360,10 +360,7 @@ export class GameServer {
             room.players[0].isHost = true;
           }
 
-          this.broadcastToRoom(roomId, {
-            type: "PLAYER_LEFT",
-            payload: { playerId: socketId },
-          });
+          this.broadcastGameStateToRoom(roomId);
         }
         break;
       }
