@@ -50,19 +50,32 @@ export function GameLobby({
             <Users className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-semibold">Room: {room.id}</h2>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyRoomLink}
-            className="flex items-center gap-2"
-          >
-            {copied ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              <Copy className="w-4 h-4" />
-            )}
-            {copied ? "Copied!" : "Share Link"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyRoomLink}
+              className="flex items-center gap-2"
+            >
+              {copied ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+              {copied ? "Copied!" : "Share Link"}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                console.log("Header leave room clicked");
+                onLeaveRoom();
+              }}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              ✕ Leave
+            </Button>
+          </div>
         </div>
 
         <div className="text-sm text-muted-foreground">
