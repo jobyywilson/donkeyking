@@ -137,7 +137,11 @@ export function useGameSocket() {
   };
 
   const leaveRoom = () => {
+    console.log("Leaving room...");
     sendMessage({ type: "LEAVE_ROOM", payload: {} });
+    // Reset local game state immediately
+    setGameState(null);
+    setError(null);
   };
 
   return {
