@@ -308,36 +308,125 @@ export class GameServer {
       return;
     }
 
+    // Check if this is the first card of the trick (sets the lead suit)
+    if (room.currentTrick.length === 0) {
+      room.trickLeadSuit = cardToPlay.suit;
+    }
+
     // Remove card from player's hand
     this.removeCardFromPlayer(room, socket.id, cardId);
     currentPlayer.cardCount--;
 
-    // Add card to center table
-    room.currentTrick.push(cardToPlay);
+    // Add card to current trick
+    room.currentTrick.push({
+      ...cardToPlay,
+      playedBy: socket.id,
+    } as any);
+
+    console.log(
+      `${currentPlayer.name} played ${cardToPlay.rank} of ${cardToPlay.suit}`,
+    );
 
     // Check if trick is complete (4 cards played)
     if (room.currentTrick.length === 4) {
-      // Move trick to center cards
-      room.centerCards.push(...room.currentTrick);
-      room.currentTrick = [];
+      this.completeTrick(room);
+    } else {
+      // Move to next player's turn
+      room.currentPlayerIndex =
+        (room.currentPlayerIndex + 1) % room.players.length;
+
+      // Update turn status
+      room.players.forEach((p, index) => {
+        p.isCurrentTurn = index === room.currentPlayerIndex;
+      });
     }
 
-    // Move to next player's turn
-    room.currentPlayerIndex =
-      (room.currentPlayerIndex + 1) % room.players.length;
-
-    // Update turn status
-    room.players.forEach((p, index) => {
-      p.isCurrentTurn = index === room.currentPlayerIndex;
-    });
-
     // Check for win condition (player has no cards left)
-    if (currentPlayer.cardCount === 0) {
+    if (room.players.some((p) => p.cardCount === 0)) {
       room.gameState = "finished";
-      room.winner = currentPlayer.id;
+      // Winner is player with no cards
+      room.winner = room.players.find((p) => p.cardCount === 0)?.id;
+      // Donkey is player with most collected cards
+      const maxCollected = Math.max(
+        ...room.players.map((p) => p.collectedCards),
+      );
+      room.donkey = room.players.find(
+        (p) => p.collectedCards === maxCollected,
+      )?.id;
     }
 
     this.broadcastGameStateUpdate(room);
+  }
+
+  private completeTrick(room: GameRoom): void {
+    const leadSuit = room.trickLeadSuit;
+    console.log(`Completing trick with lead suit: ${leadSuit}`);
+
+    // Find the highest card of the lead suit
+    const leadSuitCards = room.currentTrick.filter(
+      (card) => card.suit === leadSuit,
+    );
+
+    let winningCard = leadSuitCards[0];
+    if (leadSuitCards.length > 1) {
+      // Compare cards of the same suit to find highest
+      winningCard = leadSuitCards.reduce((highest, current) => {
+        if (this.compareCards(current, highest) > 0) {
+          return current;
+        }
+        return highest;
+      });
+    }
+
+    // Find the player who played the winning card
+    const winnerPlayerId = (winningCard as any).playedBy;
+    const winnerPlayer = room.players.find((p) => p.id === winnerPlayerId);
+
+    if (winnerPlayer) {
+      // Winner collects all cards from the trick
+      winnerPlayer.collectedCards += room.currentTrick.length;
+      console.log(
+        `${winnerPlayer.name} wins trick with ${winningCard.rank} of ${winningCard.suit}, collected ${room.currentTrick.length} cards`,
+      );
+
+      // Winner starts the next trick
+      const winnerIndex = room.players.findIndex(
+        (p) => p.id === winnerPlayerId,
+      );
+      room.currentPlayerIndex = winnerIndex;
+      room.trickStartPlayer = winnerIndex;
+
+      // Update turn status - winner goes first
+      room.players.forEach((p, index) => {
+        p.isCurrentTurn = index === winnerIndex;
+      });
+    }
+
+    // Clear the trick and reset lead suit
+    room.centerCards.push(...room.currentTrick);
+    room.currentTrick = [];
+    room.trickLeadSuit = undefined;
+  }
+
+  private compareCards(card1: Card, card2: Card): number {
+    const rankOrder = [
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "J",
+      "Q",
+      "K",
+      "A",
+    ];
+    const rank1Index = rankOrder.indexOf(card1.rank);
+    const rank2Index = rankOrder.indexOf(card2.rank);
+    return rank1Index - rank2Index;
   }
 
   private passCards(socket: any, cardIds: string[]): void {
