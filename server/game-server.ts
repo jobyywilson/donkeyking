@@ -148,23 +148,27 @@ export class GameServer {
       return;
     }
 
-    // Check if this player is rejoining (same name)
-    const existingPlayer = room.players.find((p) => p.name === playerName);
+    // Check if this player is rejoining (same socket ID)
+    const existingPlayer = room.players.find((p) => p.id === socket.id);
     let isHost = false;
 
     if (existingPlayer) {
       // Player is rejoining - preserve their host status
       isHost = existingPlayer.isHost;
       // Remove the old entry
-      room.players = room.players.filter((p) => p.name !== playerName);
+      room.players = room.players.filter((p) => p.id !== socket.id);
     } else {
       // New player - only make host if no current host exists
       isHost = !room.players.some((p) => p.isHost);
     }
 
+    // Generate unique display name
+    const displayName = this.generateUniqueDisplayName(room, playerName);
+
     const player: Player = {
       id: socket.id,
       name: playerName,
+      displayName: displayName,
       cardCount: 0,
       isReady: false,
       isHost: isHost,
