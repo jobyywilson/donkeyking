@@ -43,7 +43,7 @@ export default function Index() {
   // Loading/Error states
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 flex items-center justify-center p-4">
         <Card className="p-8 text-center bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-white/50">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
             <WifiOff className="w-8 h-8 text-white animate-pulse" />
