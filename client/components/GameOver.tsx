@@ -18,7 +18,7 @@ export function GameOver({ gameState, onPlayAgain, onGoHome }: GameOverProps) {
   const isDonkey = room.donkey === myId;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* Main Result Card */}
         <Card className="p-8 bg-white/90 backdrop-blur-sm shadow-2xl text-center">
