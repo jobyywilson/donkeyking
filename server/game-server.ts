@@ -112,7 +112,7 @@ export class GameServer {
       players: [player],
       gameState: "waiting",
       currentPlayerIndex: 0,
-      maxPlayers: 4,
+      maxPlayers: GAME_RULES.maxPlayers,
       createdAt: new Date(),
       centerCards: [],
       currentTrick: [],
@@ -228,10 +228,12 @@ export class GameServer {
     const player = room.players.find((p) => p.id === socket.id);
     if (!player?.isHost) return;
 
-    if (room.players.length !== 4) {
+    if (room.players.length !== GAME_RULES.maxPlayers) {
       this.sendToSocket(socket, {
         type: "ERROR",
-        payload: { message: "Need exactly 4 players to start" },
+        payload: {
+          message: `Need exactly ${GAME_RULES.maxPlayers} players to start`,
+        },
       });
       return;
     }
@@ -258,7 +260,7 @@ export class GameServer {
 
     // Create and shuffle deck
     const deck = this.createDeck();
-    const cardsPerPlayer = 13; // Exactly 13 cards per player for 4 players
+    const cardsPerPlayer = GAME_RULES.cardsPerPlayer;
 
     console.log(
       `Dealing ${cardsPerPlayer} cards to each of ${room.players.length} players`,
