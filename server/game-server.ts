@@ -535,12 +535,14 @@ export class GameServer {
             players: room.players.map((p) => ({
               id: p.id,
               name: p.name,
+              displayName: p.displayName || p.name, // Ensure displayName is always present
               cardCount: p.cardCount,
               isReady: p.isReady,
               isHost: p.isHost,
               isCurrentTurn: p.isCurrentTurn,
               sets: p.sets, // Sets are public information
               isConnected: p.isConnected,
+              collectedCards: p.collectedCards,
             })),
           },
           myCards: this.getPlayerCards(room, player.id), // Send actual player cards
@@ -571,12 +573,14 @@ export class GameServer {
             players: room.players.map((p) => ({
               id: p.id,
               name: p.name,
+              displayName: p.displayName || p.name, // Ensure displayName is always present
               cardCount: p.cardCount,
               isReady: p.isReady,
               isHost: p.isHost,
               isCurrentTurn: p.isCurrentTurn,
               sets: p.sets,
               isConnected: p.isConnected,
+              collectedCards: p.collectedCards,
             })),
           },
           myCards: this.getPlayerCards(room, player.id), // Send actual player cards
