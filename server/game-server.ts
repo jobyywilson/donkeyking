@@ -478,6 +478,15 @@ export class GameServer {
   }
 
   private leaveRoom(socket: any): void {
+    console.log(`Player ${socket.id} requested to leave room`);
+
+    // Send confirmation to the leaving player
+    this.sendToSocket(socket, {
+      type: "PLAYER_LEFT",
+      payload: { playerId: socket.id },
+    });
+
+    // Remove from room
     this.handlePlayerDisconnect(socket.id);
   }
 
