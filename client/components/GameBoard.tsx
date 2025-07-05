@@ -50,7 +50,7 @@ export function GameBoard({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6">
