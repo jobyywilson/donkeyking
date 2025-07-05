@@ -1,6 +1,7 @@
 export interface Player {
   id: string;
-  name: string;
+  name: string; // Original name entered by player
+  displayName: string; // Name shown in UI (with unique suffix if needed)
   cardCount: number;
   isReady: boolean;
   isHost: boolean;
