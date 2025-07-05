@@ -73,7 +73,7 @@ export function GameOver({ gameState, onPlayAgain, onGoHome }: GameOverProps) {
                   <div className="flex items-center gap-3">
                     <Trophy className="w-6 h-6 text-green-600" />
                     <span className="font-semibold text-green-800">
-                      {winner.name}
+                      {winner.displayName}
                     </span>
                   </div>
                   <Badge className="bg-green-500 text-white">Winner!</Badge>
@@ -93,7 +93,7 @@ export function GameOver({ gameState, onPlayAgain, onGoHome }: GameOverProps) {
                       <span className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm font-bold text-gray-700">
                         {index + 2}
                       </span>
-                      <span className="font-medium">{player.name}</span>
+                      <span className="font-medium">{player.displayName}</span>
                     </div>
                     <Badge variant="outline">
                       {player.cardCount} cards left
@@ -107,7 +107,7 @@ export function GameOver({ gameState, onPlayAgain, onGoHome }: GameOverProps) {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">🐴</span>
                     <span className="font-semibold text-red-800">
-                      {donkey.name}
+                      {donkey.displayName}
                     </span>
                   </div>
                   <Badge className="bg-red-500 text-white">Donkey</Badge>
