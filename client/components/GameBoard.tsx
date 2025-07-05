@@ -98,8 +98,13 @@ export function GameBoard({
                 {player.isHost && <Crown className="w-4 h-4 text-yellow-500" />}
                 <span className="font-medium">{player.name}</span>
                 <Badge variant="outline">{player.cardCount} cards</Badge>
-                {player.sets.length > 0 && (
-                  <Badge variant="secondary">{player.sets.length} sets</Badge>
+                {player.collectedCards > 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="bg-orange-100 text-orange-700"
+                  >
+                    {player.collectedCards} collected
+                  </Badge>
                 )}
               </div>
             ))}
@@ -110,6 +115,18 @@ export function GameBoard({
         <Card className="p-6 mb-6 bg-green-100 backdrop-blur-sm border-2 border-dashed border-green-400">
           <h3 className="text-lg font-semibold mb-4 text-center text-green-800">
             Center Table
+            {room.trickLeadSuit && (
+              <div className="text-sm font-normal text-green-600 mt-1">
+                Lead Suit: {room.trickLeadSuit}{" "}
+                {room.trickLeadSuit === "hearts"
+                  ? "♥"
+                  : room.trickLeadSuit === "diamonds"
+                    ? "♦"
+                    : room.trickLeadSuit === "clubs"
+                      ? "♣"
+                      : "♠"}
+              </div>
+            )}
           </h3>
 
           {/* Current Trick */}
@@ -236,11 +253,11 @@ export function GameBoard({
             </h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div className="space-y-2">
-                <div>• Click to select a card</div>
-                <div>• Drag cards to center table</div>
+                <div>• Follow the lead suit if you can</div>
+                <div>• Play any card if you can't match</div>
               </div>
               <div className="space-y-2">
-                <div>• Play one card per turn</div>
+                <div>• Highest card of lead suit wins trick</div>
                 <div>• First to empty hand wins!</div>
               </div>
             </div>
