@@ -159,12 +159,15 @@ export function GameLobby({
         )}
 
         <Button
-          onClick={onLeaveRoom}
+          onClick={() => {
+            console.log("Leave room clicked");
+            onLeaveRoom();
+          }}
           variant="destructive"
           size="lg"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white border-2 border-red-400"
         >
-          Leave Room
+          🚪 Leave Room
         </Button>
       </div>
 
