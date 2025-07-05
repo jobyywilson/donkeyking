@@ -601,6 +601,29 @@ export class GameServer {
 
   private playerCardStorage: Map<string, Map<string, Card[]>> = new Map();
 
+  private generateUniqueDisplayName(
+    room: GameRoom,
+    desiredName: string,
+  ): string {
+    const existingNames = room.players.map((p) => p.displayName);
+
+    // If name is unique, use it as-is
+    if (!existingNames.includes(desiredName)) {
+      return desiredName;
+    }
+
+    // Find the next available number
+    let counter = 2;
+    let displayName = `${desiredName} (${counter})`;
+
+    while (existingNames.includes(displayName)) {
+      counter++;
+      displayName = `${desiredName} (${counter})`;
+    }
+
+    return displayName;
+  }
+
   private getPlayerCards(room: GameRoom, playerId: string): Card[] {
     const roomCards = this.playerCardStorage.get(room.id);
     if (!roomCards) return [];
