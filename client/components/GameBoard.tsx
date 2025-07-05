@@ -96,7 +96,7 @@ export function GameBoard({
                 )}
               >
                 {player.isHost && <Crown className="w-4 h-4 text-yellow-500" />}
-                <span className="font-medium">{player.name}</span>
+                <span className="font-medium">{player.displayName}</span>
                 <Badge variant="outline">{player.cardCount} cards</Badge>
                 {player.collectedCards > 0 && (
                   <Badge
