@@ -254,7 +254,9 @@ export class GameServer {
       this.setPlayerCards(room, room.players[i].id, cards);
       room.players[i].cardCount = cards.length;
 
-      console.log(`Player ${room.players[i].name} dealt ${cards.length} cards`);
+      console.log(
+        `Player ${room.players[i].displayName} dealt ${cards.length} cards`,
+      );
     }
 
     // Send game state to each player individually with their own cards
