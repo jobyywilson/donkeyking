@@ -10,11 +10,12 @@ export function useGameSocket() {
 
   useEffect(() => {
     // Connect to the WebSocket server
-    const socket = io("http://localhost:8080", {
+    const socket = io(window.location.origin, {
       path: "/socket.io",
       transports: ["polling", "websocket"],
-      timeout: 10000,
-      forceNew: true,
+      timeout: 15000,
+      upgrade: true,
+      autoConnect: true,
     });
     socketRef.current = socket;
 
