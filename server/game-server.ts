@@ -81,6 +81,7 @@ export class GameServer {
     const player: Player = {
       id: socket.id,
       name: playerName,
+      displayName: playerName, // First player always gets their name as-is
       cardCount: 0,
       isReady: false,
       isHost: true,
