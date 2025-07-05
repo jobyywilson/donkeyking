@@ -37,7 +37,9 @@ export function useGameSocket() {
 
     socket.on("connect_error", (error) => {
       console.error("🚫 Connection error:", error);
-      setError(`Connection failed: ${error.message}`);
+      setError(
+        "Unable to connect to game server. Please try refreshing the page.",
+      );
       setIsConnected(false);
     });
 
@@ -49,7 +51,17 @@ export function useGameSocket() {
 
     socket.on("reconnect_error", (error) => {
       console.error("🔄❌ Reconnection error:", error);
-      setError("Reconnection failed");
+      setError("Connection lost. Please refresh the page to reconnect.");
+    });
+
+    socket.on("reconnecting", (attemptNumber) => {
+      console.log("🔄 Attempting to reconnect...", attemptNumber);
+      setError("Reconnecting to game server...");
+    });
+
+    socket.on("reconnect_failed", () => {
+      console.error("🔄❌ Reconnection failed completely");
+      setError("Unable to reconnect. Please refresh the page.");
     });
 
     return () => {
