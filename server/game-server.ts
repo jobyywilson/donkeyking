@@ -433,27 +433,6 @@ export class GameServer {
     room.trickLeadSuit = undefined;
   }
 
-  private compareCards(card1: Card, card2: Card): number {
-    const rankOrder = [
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "J",
-      "Q",
-      "K",
-      "A",
-    ];
-    const rank1Index = rankOrder.indexOf(card1.rank);
-    const rank2Index = rankOrder.indexOf(card2.rank);
-    return rank1Index - rank2Index;
-  }
-
   private passCards(socket: any, cardIds: string[]): void {
     // Deprecated - replaced with playCard
     this.sendToSocket(socket, {
