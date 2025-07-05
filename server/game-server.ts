@@ -352,13 +352,15 @@ export class GameServer {
       `${currentPlayer.displayName} played ${cardToPlay.rank} of ${cardToPlay.suit}`,
     );
 
-    // Check if trick is complete (4 cards played)
-    if (room.currentTrick.length === 4) {
+    // Check if trick is complete
+    if (room.currentTrick.length === GAME_RULES.maxPlayers) {
       this.completeTrick(room);
     } else {
-      // Move to next player's turn
-      room.currentPlayerIndex =
-        (room.currentPlayerIndex + 1) % room.players.length;
+      // Move to next player's turn using rules
+      room.currentPlayerIndex = GAME_RULES.getNextPlayer(
+        room,
+        room.currentPlayerIndex,
+      );
 
       // Update turn status
       room.players.forEach((p, index) => {
