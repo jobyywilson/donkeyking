@@ -51,7 +51,7 @@ export function HomePage({ onCreateRoom, onJoinRoom, error }: HomePageProps) {
             </div>
           </div>
           <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-2">
-            🎴 Indian Donkey 🎴
+            🎴 DonkeyKing 🎴
           </h1>
           <p className="text-xl text-gray-700 font-semibold">
             ✨ Fun multiplayer card game for 4 players! ✨
