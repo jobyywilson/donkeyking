@@ -41,23 +41,23 @@ export function HomePage({ onCreateRoom, onJoinRoom, error }: HomePageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-4 rounded-full bg-primary/10">
-              <Gamepad2 className="w-10 h-10 text-primary" />
+            <div className="p-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
+              <Gamepad2 className="w-10 h-10 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            Indian Donkey
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-2">
+            🎴 Indian Donkey 🎴
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Multiplayer card game for 2-6 players
+          <p className="text-xl text-gray-700 font-semibold">
+            ✨ Fun multiplayer card game for 4 players! ✨
           </p>
-          <Badge className="mt-2 bg-accent text-accent-foreground">
-            🎯 Form sets of 4 cards to win!
+          <Badge className="mt-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-lg px-4 py-2 shadow-lg">
+            🎯 First to empty your hand wins! 🏆
           </Badge>
         </div>
 
