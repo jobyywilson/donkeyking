@@ -87,6 +87,7 @@ export class GameServer {
       isCurrentTurn: false,
       sets: [],
       isConnected: true,
+      collectedCards: 0,
     };
 
     const room: GameRoom = {
@@ -98,6 +99,7 @@ export class GameServer {
       createdAt: new Date(),
       centerCards: [],
       currentTrick: [],
+      trickStartPlayer: 0,
     };
 
     this.rooms.set(roomId, room);
