@@ -67,7 +67,7 @@ export function GameBoard({
                 <Hand className="w-3 h-3" />
                 {myPlayer?.isCurrentTurn
                   ? "Your Turn"
-                  : `${currentPlayer.name}'s Turn`}
+                  : `${currentPlayer.displayName}'s Turn`}
               </Badge>
             </div>
           </div>
@@ -172,7 +172,7 @@ export function GameBoard({
               </div>
             ) : (
               <div className="text-gray-500">
-                <p>Waiting for {currentPlayer.name}'s turn...</p>
+                <p>Waiting for {currentPlayer.displayName}'s turn...</p>
               </div>
             )}
           </div>
