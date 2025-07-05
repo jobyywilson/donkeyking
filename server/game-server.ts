@@ -8,6 +8,17 @@ import {
   SocketEvent,
   SocketResponse,
 } from "@shared/game";
+import {
+  GAME_RULES,
+  compareCards,
+  findTrickWinner,
+  isValidCardPlay,
+  shouldPlayerCollectCards,
+  checkGameOver,
+  findGameWinner,
+  findGameLoser,
+  applySpecialRules,
+} from "./game-rules";
 
 export class GameServer {
   private io: Server;
