@@ -225,11 +225,14 @@ export class GameServer {
     room.currentPlayerIndex = 0;
     room.centerCards = [];
     room.currentTrick = [];
+    room.trickLeadSuit = undefined;
+    room.trickStartPlayer = 0;
 
     // Reset all players' turn status
     room.players.forEach((player, index) => {
       player.isCurrentTurn = index === 0;
       player.sets = [];
+      player.collectedCards = 0;
     });
 
     // Create and shuffle deck
