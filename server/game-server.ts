@@ -331,7 +331,7 @@ export class GameServer {
     } as any);
 
     console.log(
-      `${currentPlayer.name} played ${cardToPlay.rank} of ${cardToPlay.suit}`,
+      `${currentPlayer.displayName} played ${cardToPlay.rank} of ${cardToPlay.suit}`,
     );
 
     // Check if trick is complete (4 cards played)
@@ -393,7 +393,7 @@ export class GameServer {
       // Winner collects all cards from the trick
       winnerPlayer.collectedCards += room.currentTrick.length;
       console.log(
-        `${winnerPlayer.name} wins trick with ${winningCard.rank} of ${winningCard.suit}, collected ${room.currentTrick.length} cards`,
+        `${winnerPlayer.displayName} wins trick with ${winningCard.rank} of ${winningCard.suit}, collected ${room.currentTrick.length} cards`,
       );
 
       // Winner starts the next trick
@@ -513,7 +513,7 @@ export class GameServer {
             room.players.forEach((p) => (p.isHost = false));
             room.players[0].isHost = true;
             console.log(
-              `New host assigned: ${room.players[0].name} in room ${roomId}`,
+              `New host assigned: ${room.players[0].displayName} in room ${roomId}`,
             );
           }
 
