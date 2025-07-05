@@ -48,10 +48,14 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         game: {
-          felt: "142 71% 8%",
-          gold: "39 100% 60%",
-          silver: "210 20% 80%",
+          felt: "120 60% 25%",
+          gold: "45 100% 60%",
+          silver: "200 20% 80%",
           bronze: "25 75% 65%",
+          rainbow: "280 100% 70%",
+          sunshine: "55 100% 70%",
+          ocean: "200 100% 60%",
+          cherry: "340 100% 70%",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
