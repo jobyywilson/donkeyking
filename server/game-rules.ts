@@ -99,8 +99,25 @@ export function isValidCardPlay(
  * TRICK WINNER LOGIC
  * Define who wins each trick and gets the cards
  */
-export function findTrickWinner(trick: Card[], leadSuit?: string): Card {
-  if (!leadSuit || trick.length === 0) {
+export function findTrickWinner(trick: Card[], leadSuit?: string): Card | null {
+  if (trick.length === 0) {
+    return null;
+  }
+
+  // Special rule: If all 4 players play the same rank, cards are "bent" (no winner)
+  if (trick.length === 4) {
+    const ranks = trick.map((card) => card.rank);
+    const uniqueRanks = new Set(ranks);
+
+    if (uniqueRanks.size === 1) {
+      console.log(
+        `All players played ${ranks[0]} - cards are bent and removed!`,
+      );
+      return null; // No winner, cards are bent/removed
+    }
+  }
+
+  if (!leadSuit) {
     return trick[0];
   }
 
@@ -126,7 +143,17 @@ export function shouldPlayerCollectCards(
   trick: Card[],
   leadSuit?: string,
 ): boolean {
-  // In Donkey King, winner always collects all cards from the trick
+  // Special rule: If all 4 players play the same rank, nobody collects
+  if (trick.length === 4) {
+    const ranks = trick.map((card) => card.rank);
+    const uniqueRanks = new Set(ranks);
+
+    if (uniqueRanks.size === 1) {
+      return false; // Cards are bent/removed, nobody collects
+    }
+  }
+
+  // Otherwise, winner always collects all cards from the trick
   return true;
 }
 
