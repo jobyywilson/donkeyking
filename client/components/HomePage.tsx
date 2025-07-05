@@ -182,7 +182,7 @@ export function HomePage({ onCreateRoom, onJoinRoom, error }: HomePageProps) {
         <div className="mt-8 grid grid-cols-2 gap-4 text-center">
           <Card className="p-4 bg-white/60 backdrop-blur-sm">
             <Users className="w-6 h-6 text-primary mx-auto mb-2" />
-            <div className="text-sm font-medium">2-6 Players</div>
+            <div className="text-sm font-medium">4 Players</div>
             <div className="text-xs text-muted-foreground">Multiplayer fun</div>
           </Card>
           <Card className="p-4 bg-white/60 backdrop-blur-sm">
