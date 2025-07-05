@@ -67,7 +67,7 @@ export function GameBoard({
                 <Hand className="w-3 h-3" />
                 {myPlayer?.isCurrentTurn
                   ? "Your Turn"
-                  : `${currentPlayer.displayName}'s Turn`}
+                  : `${currentPlayer?.displayName || currentPlayer?.name || "Unknown"}'s Turn`}
               </Badge>
             </div>
           </div>
@@ -96,7 +96,9 @@ export function GameBoard({
                 )}
               >
                 {player.isHost && <Crown className="w-4 h-4 text-yellow-500" />}
-                <span className="font-medium">{player.displayName}</span>
+                <span className="font-medium">
+                  {player.displayName || player.name}
+                </span>
                 <Badge variant="outline">{player.cardCount} cards</Badge>
                 {player.collectedCards > 0 && (
                   <Badge
@@ -172,7 +174,13 @@ export function GameBoard({
               </div>
             ) : (
               <div className="text-gray-500">
-                <p>Waiting for {currentPlayer.displayName}'s turn...</p>
+                <p>
+                  Waiting for{" "}
+                  {currentPlayer?.displayName ||
+                    currentPlayer?.name ||
+                    "next player"}
+                  's turn...
+                </p>
               </div>
             )}
           </div>

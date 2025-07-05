@@ -103,7 +103,9 @@ export function GameLobby({
             >
               <div className="flex items-center gap-3">
                 {player.isHost && <Crown className="w-5 h-5 text-yellow-500" />}
-                <span className="font-medium">{player.displayName}</span>
+                <span className="font-medium">
+                  {player.displayName || player.name}
+                </span>
                 {player.id === myId && <Badge variant="secondary">You</Badge>}
               </div>
 
