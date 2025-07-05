@@ -7,6 +7,7 @@ export interface Player {
   isCurrentTurn: boolean;
   sets: Card[][];
   isConnected: boolean;
+  collectedCards: number; // Number of cards collected from tricks
 }
 
 export interface Card {
@@ -39,6 +40,8 @@ export interface GameRoom {
   createdAt: Date;
   centerCards: Card[];
   currentTrick: Card[];
+  trickLeadSuit?: "hearts" | "diamonds" | "clubs" | "spades";
+  trickStartPlayer: number;
 }
 
 export interface GameState {
