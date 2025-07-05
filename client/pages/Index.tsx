@@ -43,20 +43,24 @@ export default function Index() {
   // Loading/Error states
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-        <Card className="p-8 text-center bg-white/90 backdrop-blur-sm">
-          <WifiOff className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-foreground mb-2">
-            Connecting to Game Server...
+      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center p-4">
+        <Card className="p-8 text-center bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-white/50">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+            <WifiOff className="w-8 h-8 text-white animate-pulse" />
+          </div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+            🎮 Connecting to Game Server...
           </h2>
-          <p className="text-muted-foreground">
-            Please wait while we establish connection
+          <p className="text-gray-600 text-lg">
+            ✨ Getting ready for some card game fun!
           </p>
           {error && (
-            <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <div className="mt-4 p-4 bg-gradient-to-r from-red-100 to-pink-100 border-2 border-red-300 rounded-xl">
               <div className="flex items-center gap-2 justify-center">
-                <AlertCircle className="w-4 h-4 text-destructive" />
-                <span className="text-sm text-destructive">{error}</span>
+                <AlertCircle className="w-5 h-5 text-red-500" />
+                <span className="text-sm text-red-700 font-medium">
+                  {error}
+                </span>
               </div>
             </div>
           )}
