@@ -170,6 +170,7 @@ export class GameServer {
       isCurrentTurn: false,
       sets: [],
       isConnected: true,
+      collectedCards: 0,
     };
 
     room.players.push(player);
