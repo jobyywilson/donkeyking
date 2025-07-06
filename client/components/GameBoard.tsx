@@ -22,14 +22,46 @@ export function GameBoard({
   const myPlayer = room.players.find((p) => p.id === myId);
   const currentPlayer = room.players[room.currentPlayerIndex];
 
+  // Group cards by suit for easier selection
+  const groupedCards = myCards.reduce(
+    (groups, card) => {
+      if (!groups[card.suit]) groups[card.suit] = [];
+      groups[card.suit].push(card);
+      return groups;
+    },
+    {} as Record<string, GameCard[]>,
+  );
+
+  // Sort cards within each suit by rank
+  const suitOrder = ["spades", "hearts", "diamonds", "clubs"];
+  const rankOrder = [
+    "A",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "J",
+    "Q",
+    "K",
+  ];
+
+  Object.keys(groupedCards).forEach((suit) => {
+    groupedCards[suit].sort(
+      (a, b) => rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank),
+    );
+  });
+
   const handleCardClick = (cardId: string) => {
     if (!myPlayer?.isCurrentTurn) return;
 
     if (selectedCard === cardId) {
-      // Deselect if clicking the same card
       setSelectedCard(null);
     } else {
-      // Select the card
       setSelectedCard(cardId);
     }
   };
@@ -163,22 +195,23 @@ export function GameBoard({
 
         {/* Center Play Area with 4 Player Zones */}
         <div className="flex-1 flex justify-center items-center px-4">
-          <div className="relative w-96 h-96">
+          <div className="relative w-[500px] h-[400px]">
             {/* Player Zones arranged in a square */}
             {room.players.map((player, playerIndex) => {
               const positions = [
-                { top: "10px", left: "50%", transform: "translateX(-50%)" }, // Top
-                { top: "50%", right: "10px", transform: "translateY(-50%)" }, // Right
-                { bottom: "10px", left: "50%", transform: "translateX(-50%)" }, // Bottom
-                { top: "50%", left: "10px", transform: "translateY(-50%)" }, // Left
+                { top: "20px", left: "50%", transform: "translateX(-50%)" }, // Top
+                { top: "50%", right: "20px", transform: "translateY(-50%)" }, // Right
+                { bottom: "20px", left: "50%", transform: "translateX(-50%)" }, // Bottom
+                { top: "50%", left: "20px", transform: "translateY(-50%)" }, // Left
               ];
 
+              // Find cards played by this player in current trick
               const playerCards = room.currentTrick.filter(
                 (card, cardIndex) => {
-                  // Map trick cards to players based on play order
-                  const playOrderIndex = (room.trickStartPlayer + cardIndex) % room.players.length;
+                  const playOrderIndex =
+                    (room.trickStartPlayer + cardIndex) % room.players.length;
                   return playOrderIndex === playerIndex;
-                }
+                },
               );
 
               return (
@@ -190,7 +223,7 @@ export function GameBoard({
                   {/* Player Zone */}
                   <div
                     className={cn(
-                      "w-24 h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 relative",
+                      "w-28 h-36 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 relative",
                       player.isCurrentTurn
                         ? "border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-400/20"
                         : "border-white/20 bg-white/5",
@@ -198,13 +231,14 @@ export function GameBoard({
                     onDrop={(e) => {
                       e.preventDefault();
                       const cardId = e.dataTransfer.getData("text/plain");
-                      if (cardId && myPlayer?.isCurrentTurn) handleCardDrop(cardId);
+                      if (cardId && myPlayer?.isCurrentTurn)
+                        handleCardDrop(cardId);
                     }}
                     onDragOver={(e) => e.preventDefault()}
                   >
                     {/* Player Name Label */}
-                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                      <div className="text-xs text-white/80 bg-black/30 px-2 py-1 rounded">
+                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
+                      <div className="text-xs text-white bg-black/50 px-2 py-1 rounded whitespace-nowrap">
                         {player.displayName || player.name}
                       </div>
                     </div>
@@ -216,20 +250,20 @@ export function GameBoard({
                           <PlayingCard
                             key={card.id}
                             card={{ ...card, faceUp: true }}
-                            size="sm"
+                            size="md"
                             className="border border-white/20"
                           />
                         ))}
                       </div>
                     ) : (
-                      <div className="text-white/40 text-xs">
+                      <div className="text-white/60 text-xs">
                         {player.isCurrentTurn && myPlayer?.id === player.id ? (
                           <>
-                            <Hand className="w-6 h-6 mx-auto mb-1" />
-                            <p>Play</p>
+                            <Hand className="w-8 h-8 mx-auto mb-2" />
+                            <p>Play Card</p>
                           </>
                         ) : (
-                          <p>Waiting</p>
+                          <p>Waiting...</p>
                         )}
                       </div>
                     )}
@@ -240,35 +274,28 @@ export function GameBoard({
 
             {/* Center area for game info */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-              <div className="bg-black/30 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/20">
                 <p className="text-white text-sm font-semibold">
                   Trick {room.currentTrick.length}/4
                 </p>
+                {room.trickLeadSuit && (
+                  <p className="text-yellow-300 text-lg mt-1">
+                    Lead:{" "}
+                    {room.trickLeadSuit === "hearts"
+                      ? "♥️"
+                      : room.trickLeadSuit === "diamonds"
+                        ? "♦️"
+                        : room.trickLeadSuit === "clubs"
+                          ? "♣️"
+                          : "♠️"}
+                  </p>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-          {/* Lead Suit Indicator */}
-          {room.trickLeadSuit && (
-            <div className="bg-black/30 backdrop-blur-sm rounded-xl px-6 py-3 mb-6 border border-white/20">
-              <p className="text-white text-center font-semibold">
-                Lead Suit:{" "}
-                <span className="text-yellow-300 text-xl ml-2">
-                  {room.trickLeadSuit === "hearts"
-                    ? "♥️"
-                    : room.trickLeadSuit === "diamonds"
-                      ? "♦️"
-                      : room.trickLeadSuit === "clubs"
-                        ? "♣️"
-                        : "♠️"}
-                </span>
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Player Hand - Fanned Cards at Bottom */}
+        {/* Player Hand - Grouped by Suits */}
         <div className="bg-gradient-to-t from-black/40 to-transparent pt-8 pb-6">
           {/* Action Button */}
           {myPlayer?.isCurrentTurn && selectedCard && (
@@ -283,63 +310,76 @@ export function GameBoard({
             </div>
           )}
 
-          {/* My Cards - Fanned Layout */}
-          <div className="relative h-36 mx-4">
+          {/* My Cards - Grouped by Suits */}
+          <div className="mx-4">
             {myCards.length > 0 ? (
-              <div className="relative flex justify-center">
-                {myCards.map((card, index) => {
-                  const totalCards = myCards.length;
-                  const maxSpread = Math.min(totalCards * 25, 400); // Max spread width
-                  const cardSpacing =
-                    totalCards > 1 ? maxSpread / (totalCards - 1) : 0;
-                  const xPosition =
-                    totalCards > 1 ? index * cardSpacing - maxSpread / 2 : 0;
-                  const rotation =
-                    totalCards > 1 ? (index / (totalCards - 1) - 0.5) * 45 : 0; // Fan effect
-                  const yOffset = Math.abs(rotation) * 0.8; // Slight arc effect
+              <div className="space-y-4">
+                {suitOrder.map((suit) => {
+                  const suitCards = groupedCards[suit];
+                  if (!suitCards || suitCards.length === 0) return null;
+
+                  const suitSymbols = {
+                    hearts: "♥��",
+                    diamonds: "♦️",
+                    clubs: "♣️",
+                    spades: "♠️",
+                  };
 
                   return (
                     <div
-                      key={card.id}
-                      className={cn(
-                        "absolute transition-all duration-300 cursor-pointer",
-                        selectedCard === card.id &&
-                          "z-40 scale-110 -translate-y-12",
-                        myPlayer?.isCurrentTurn
-                          ? "hover:z-30 hover:scale-105 hover:-translate-y-6"
-                          : "opacity-60",
-                      )}
-                      style={{
-                        left: `calc(50% + ${xPosition}px)`,
-                        transform: `translateX(-50%) translateY(${selectedCard === card.id ? -20 : yOffset}px) rotate(${rotation}deg)`,
-                        zIndex: selectedCard === card.id ? 40 : 10 + index,
-                        filter:
-                          selectedCard === card.id
-                            ? "drop-shadow(0 20px 40px rgba(255,255,0,0.3))"
-                            : "drop-shadow(0 8px 16px rgba(0,0,0,0.3))",
-                      }}
-                      draggable={myPlayer?.isCurrentTurn}
-                      onDragStart={(e) => {
-                        if (myPlayer?.isCurrentTurn) {
-                          e.dataTransfer.setData("text/plain", card.id);
-                        }
-                      }}
+                      key={suit}
+                      className="bg-black/20 rounded-xl p-4 backdrop-blur-sm border border-white/10"
                     >
-                      <PlayingCard
-                        card={{
-                          ...card,
-                          faceUp: true,
-                          selected: selectedCard === card.id,
-                        }}
-                        onClick={() => handleCardClick(card.id)}
-                        size="md"
-                        className={cn(
-                          "transition-all duration-300 border border-white/20",
-                          selectedCard === card.id &&
-                            "ring-4 ring-yellow-400 ring-offset-2 ring-offset-transparent border-yellow-400",
-                          myPlayer?.isCurrentTurn && "hover:border-yellow-300",
-                        )}
-                      />
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-white text-lg">
+                          {suitSymbols[suit as keyof typeof suitSymbols]}
+                        </span>
+                        <span className="text-white/80 text-sm font-semibold capitalize">
+                          {suit}
+                        </span>
+                        <span className="text-white/60 text-xs">
+                          ({suitCards.length})
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {suitCards.map((card) => (
+                          <div
+                            key={card.id}
+                            className={cn(
+                              "transition-all duration-300 cursor-pointer",
+                              selectedCard === card.id &&
+                                "scale-110 -translate-y-2",
+                              myPlayer?.isCurrentTurn
+                                ? "hover:scale-105 hover:-translate-y-1"
+                                : "opacity-60",
+                            )}
+                            draggable={myPlayer?.isCurrentTurn}
+                            onDragStart={(e) => {
+                              if (myPlayer?.isCurrentTurn) {
+                                e.dataTransfer.setData("text/plain", card.id);
+                              }
+                            }}
+                          >
+                            <PlayingCard
+                              card={{
+                                ...card,
+                                faceUp: true,
+                                selected: selectedCard === card.id,
+                              }}
+                              onClick={() => handleCardClick(card.id)}
+                              size="sm"
+                              className={cn(
+                                "transition-all duration-300 border border-white/20",
+                                selectedCard === card.id &&
+                                  "ring-2 ring-yellow-400 ring-offset-2 ring-offset-transparent border-yellow-400",
+                                myPlayer?.isCurrentTurn &&
+                                  "hover:border-yellow-300",
+                              )}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   );
                 })}
