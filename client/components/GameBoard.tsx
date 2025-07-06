@@ -100,7 +100,27 @@ export function GameBoard({
                   {player.displayName || player.name}
                 </span>
                 <Badge variant="outline">{player.cardCount} cards</Badge>
-                {player.collectedCards > 0 && (
+                {player.isFinished && player.finishPosition && (
+                  <Badge
+                    variant="default"
+                    className={cn(
+                      "font-bold",
+                      player.finishPosition === 1 && "bg-yellow-500 text-white",
+                      player.finishPosition === 2 && "bg-gray-400 text-white",
+                      player.finishPosition === 3 && "bg-amber-600 text-white",
+                      player.finishPosition > 3 && "bg-blue-500 text-white",
+                    )}
+                  >
+                    {player.finishPosition === 1
+                      ? "🏆 1st"
+                      : player.finishPosition === 2
+                        ? "🥈 2nd"
+                        : player.finishPosition === 3
+                          ? "🥉 3rd"
+                          : `${player.finishPosition}th`}
+                  </Badge>
+                )}
+                {!player.isFinished && player.collectedCards > 0 && (
                   <Badge
                     variant="secondary"
                     className="bg-orange-100 text-orange-700"
