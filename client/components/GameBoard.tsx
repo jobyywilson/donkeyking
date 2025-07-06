@@ -120,9 +120,22 @@ export function GameBoard({
           <Button
             onClick={onLeaveRoom}
             variant="destructive"
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6"
+            size="sm"
+            className="bg-red-600 hover:bg-red-700 text-white p-2"
           >
-            Leave Game
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
           </Button>
         </div>
 
@@ -246,27 +259,6 @@ export function GameBoard({
           })}
         </div>
 
-        {/* Center Game Info */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-black/40 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/20">
-            <p className="text-white text-sm font-semibold text-center">
-              Trick {room.currentTrick.length}/4
-            </p>
-            {room.trickLeadSuit && (
-              <p className="text-yellow-300 text-lg mt-1 text-center">
-                Lead:{" "}
-                {room.trickLeadSuit === "hearts"
-                  ? "♥️"
-                  : room.trickLeadSuit === "diamonds"
-                    ? "♦️"
-                    : room.trickLeadSuit === "clubs"
-                      ? "♣️"
-                      : "♠️"}
-              </p>
-            )}
-          </div>
-        </div>
-
         {/* Player Hand - Grouped by Suits */}
         <div className="bg-gradient-to-t from-black/40 to-transparent pt-8 pb-6">
           {/* Action Button */}
@@ -282,10 +274,10 @@ export function GameBoard({
             </div>
           )}
 
-          {/* My Cards - Grouped by Suits */}
+          {/* My Cards - Grouped by Suits Horizontally */}
           <div className="mx-4">
             {myCards.length > 0 ? (
-              <div className="space-y-4">
+              <div className="grid grid-cols-4 gap-4">
                 {suitOrder.map((suit) => {
                   const suitCards = groupedCards[suit];
                   if (!suitCards || suitCards.length === 0) return null;
@@ -300,21 +292,18 @@ export function GameBoard({
                   return (
                     <div
                       key={suit}
-                      className="bg-black/20 rounded-xl p-4 backdrop-blur-sm border border-white/10"
+                      className="bg-black/20 rounded-xl p-3 backdrop-blur-sm border border-white/10"
                     >
-                      <div className="flex items-center gap-2 mb-3">
+                      <div className="flex items-center justify-center gap-1 mb-2">
                         <span className="text-white text-lg">
                           {suitSymbols[suit as keyof typeof suitSymbols]}
-                        </span>
-                        <span className="text-white/80 text-sm font-semibold capitalize">
-                          {suit}
                         </span>
                         <span className="text-white/60 text-xs">
                           ({suitCards.length})
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-7 gap-2">
+                      <div className="flex flex-wrap gap-1 justify-center">
                         {suitCards.map((card) => (
                           <div
                             key={card.id}

@@ -23,19 +23,11 @@ export default function Index() {
   const ConnectionStatus = () => (
     <div className="fixed top-4 left-4 z-50">
       <Card className="p-2 bg-white/90 backdrop-blur-sm">
-        <div className="flex items-center gap-2">
-          {isConnected ? (
-            <>
-              <Wifi className="w-4 h-4 text-green-500" />
-              <span className="text-sm text-green-700">Connected</span>
-            </>
-          ) : (
-            <>
-              <WifiOff className="w-4 h-4 text-red-500" />
-              <span className="text-sm text-red-700">Disconnected</span>
-            </>
-          )}
-        </div>
+        {isConnected ? (
+          <Wifi className="w-5 h-5 text-green-500" />
+        ) : (
+          <WifiOff className="w-5 h-5 text-red-500" />
+        )}
       </Card>
     </div>
   );
