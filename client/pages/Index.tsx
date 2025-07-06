@@ -21,7 +21,7 @@ export default function Index() {
 
   // Connection status indicator
   const ConnectionStatus = () => (
-    <div className="fixed top-4 right-4 z-50">
+    <div className="fixed top-4 left-4 z-50">
       <Card className="p-2 bg-white/90 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           {isConnected ? (
