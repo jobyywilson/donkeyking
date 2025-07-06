@@ -106,6 +106,7 @@ export class GameServer {
       sets: [],
       isConnected: true,
       collectedCards: 0,
+      isFinished: false,
     };
 
     const room: GameRoom = {
@@ -118,6 +119,7 @@ export class GameServer {
       centerCards: [],
       currentTrick: [],
       trickStartPlayer: 0,
+      finishedPlayers: 0,
     };
 
     this.rooms.set(roomId, room);
@@ -193,6 +195,7 @@ export class GameServer {
       sets: [],
       isConnected: true,
       collectedCards: 0,
+      isFinished: false,
     };
 
     room.players.push(player);
