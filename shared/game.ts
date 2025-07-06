@@ -9,6 +9,8 @@ export interface Player {
   sets: Card[][];
   isConnected: boolean;
   collectedCards: number; // Number of cards collected from tricks
+  finishPosition?: number; // 1st, 2nd, 3rd place (undefined = still playing)
+  isFinished: boolean; // True when player has no cards left
 }
 
 export interface Card {
@@ -35,14 +37,15 @@ export interface GameRoom {
   players: Player[];
   gameState: "waiting" | "playing" | "finished";
   currentPlayerIndex: number;
-  winner?: string;
-  donkey?: string;
+  winner?: string; // First place winner
+  donkey?: string; // Last player with cards
   maxPlayers: number;
   createdAt: Date;
   centerCards: Card[];
   currentTrick: Card[];
   trickLeadSuit?: "hearts" | "diamonds" | "clubs" | "spades";
   trickStartPlayer: number;
+  finishedPlayers: number; // Count of players who finished
 }
 
 export interface GameState {
