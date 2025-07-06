@@ -18,6 +18,7 @@ import {
   findGameWinner,
   findGameLoser,
   applySpecialRules,
+  handlePlayerFinish,
 } from "./game-rules";
 
 export class GameServer {
