@@ -323,15 +323,8 @@ export function GameBoard({
             )}
           </div>
 
-          {/* Fast-Paced Gameplay Text */}
-          <div className="text-center mt-8">
-            <p
-              className="text-yellow-400 font-black text-2xl tracking-widest uppercase"
-              style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
-            >
-              FAST-PACED GAMEPLAY!
-            </p>
-          </div>
+          {/* Bottom spacing */}
+          <div className="mt-8" />
         </div>
       </div>
     </div>
