@@ -126,172 +126,144 @@ export function GameBoard({
           </Button>
         </div>
 
-        {/* Player Avatars at Top */}
-        <div className="flex justify-center gap-12 mb-8 px-4">
-          {room.players.map((player, index) => (
-            <div
-              key={player.id}
-              className={cn(
-                "flex flex-col items-center gap-2 transition-all duration-300",
-                player.isCurrentTurn && "scale-110",
-              )}
-            >
-              {/* Player Avatar Circle */}
+        {/* Player Avatars with Card Zones Below */}
+        <div className="flex justify-center gap-12 mb-6 px-4">
+          {room.players.map((player, playerIndex) => {
+            // Find cards played by this player in current trick
+            const playerCards = room.currentTrick.filter((card, cardIndex) => {
+              const playOrderIndex =
+                (room.trickStartPlayer + cardIndex) % room.players.length;
+              return playOrderIndex === playerIndex;
+            });
+
+            return (
               <div
+                key={player.id}
                 className={cn(
-                  "w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-xl border-4 shadow-lg transition-all duration-300",
-                  player.isCurrentTurn
-                    ? "bg-yellow-500 border-yellow-300 text-black shadow-yellow-300/50"
-                    : "bg-blue-600 border-blue-400 shadow-blue-600/30",
-                  player.id === myId &&
-                    "ring-4 ring-purple-400 ring-offset-4 ring-offset-transparent",
-                  player.isFinished && "bg-gray-500 border-gray-400 opacity-75",
+                  "flex flex-col items-center gap-3 transition-all duration-300",
+                  player.isCurrentTurn && "scale-105",
                 )}
               >
-                {(player.displayName || player.name || "?")[0].toUpperCase()}
-              </div>
-
-              {/* Player Name and Info */}
-              <div className="text-center">
-                <div className="text-white font-bold text-sm flex items-center justify-center gap-1">
-                  {player.displayName || player.name}
-                  {player.isHost && (
-                    <Crown className="w-3 h-3 text-yellow-400" />
-                  )}
-                </div>
-                <div className="flex gap-1 justify-center mt-1">
-                  <Badge
-                    variant="outline"
-                    className="bg-black/30 text-white border-white/40 text-xs px-2 py-0"
-                  >
-                    {player.cardCount}
-                  </Badge>
-                  {player.isFinished && player.finishPosition && (
-                    <Badge
-                      className={cn(
-                        "font-bold text-xs px-2 py-0",
-                        player.finishPosition === 1 &&
-                          "bg-yellow-500 text-black",
-                        player.finishPosition === 2 && "bg-gray-400 text-white",
-                        player.finishPosition === 3 &&
-                          "bg-amber-600 text-white",
-                        player.finishPosition > 3 && "bg-blue-500 text-white",
-                      )}
-                    >
-                      {player.finishPosition === 1
-                        ? "🏆"
-                        : player.finishPosition === 2
-                          ? "🥈"
-                          : player.finishPosition === 3
-                            ? "🥉"
-                            : player.finishPosition}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Center Play Area with 4 Player Zones */}
-        <div className="flex-1 flex justify-center items-center px-4">
-          <div className="relative w-[500px] h-[400px]">
-            {/* Player Zones arranged in a square */}
-            {room.players.map((player, playerIndex) => {
-              const positions = [
-                { top: "20px", left: "50%", transform: "translateX(-50%)" }, // Top
-                { top: "50%", right: "20px", transform: "translateY(-50%)" }, // Right
-                { bottom: "20px", left: "50%", transform: "translateX(-50%)" }, // Bottom
-                { top: "50%", left: "20px", transform: "translateY(-50%)" }, // Left
-              ];
-
-              // Find cards played by this player in current trick
-              const playerCards = room.currentTrick.filter(
-                (card, cardIndex) => {
-                  const playOrderIndex =
-                    (room.trickStartPlayer + cardIndex) % room.players.length;
-                  return playOrderIndex === playerIndex;
-                },
-              );
-
-              return (
+                {/* Player Avatar Circle */}
                 <div
-                  key={player.id}
-                  className="absolute"
-                  style={positions[playerIndex]}
+                  className={cn(
+                    "w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-xl border-4 shadow-lg transition-all duration-300",
+                    player.isCurrentTurn
+                      ? "bg-yellow-500 border-yellow-300 text-black shadow-yellow-300/50"
+                      : "bg-blue-600 border-blue-400 shadow-blue-600/30",
+                    player.id === myId &&
+                      "ring-4 ring-purple-400 ring-offset-4 ring-offset-transparent",
+                    player.isFinished &&
+                      "bg-gray-500 border-gray-400 opacity-75",
+                  )}
                 >
-                  {/* Player Zone */}
-                  <div
-                    className={cn(
-                      "w-28 h-36 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 relative",
-                      player.isCurrentTurn
-                        ? "border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-400/20"
-                        : "border-white/20 bg-white/5",
-                    )}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const cardId = e.dataTransfer.getData("text/plain");
-                      if (cardId && myPlayer?.isCurrentTurn)
-                        handleCardDrop(cardId);
-                    }}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    {/* Player Name Label */}
-                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
-                      <div className="text-xs text-white bg-black/50 px-2 py-1 rounded whitespace-nowrap">
-                        {player.displayName || player.name}
-                      </div>
-                    </div>
+                  {(player.displayName || player.name || "?")[0].toUpperCase()}
+                </div>
 
-                    {/* Card or Empty State */}
-                    {playerCards.length > 0 ? (
-                      <div className="relative">
-                        {playerCards.map((card) => (
-                          <PlayingCard
-                            key={card.id}
-                            card={{ ...card, faceUp: true }}
-                            size="md"
-                            className="border border-white/20"
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-white/60 text-xs">
-                        {player.isCurrentTurn && myPlayer?.id === player.id ? (
-                          <>
-                            <Hand className="w-8 h-8 mx-auto mb-2" />
-                            <p>Play Card</p>
-                          </>
-                        ) : (
-                          <p>Waiting...</p>
+                {/* Player Name and Info */}
+                <div className="text-center">
+                  <div className="text-white font-bold text-sm flex items-center justify-center gap-1">
+                    {player.displayName || player.name}
+                    {player.isHost && (
+                      <Crown className="w-3 h-3 text-yellow-400" />
+                    )}
+                  </div>
+                  <div className="flex gap-1 justify-center mt-1">
+                    <Badge
+                      variant="outline"
+                      className="bg-black/30 text-white border-white/40 text-xs px-2 py-0"
+                    >
+                      {player.cardCount}
+                    </Badge>
+                    {player.isFinished && player.finishPosition && (
+                      <Badge
+                        className={cn(
+                          "font-bold text-xs px-2 py-0",
+                          player.finishPosition === 1 &&
+                            "bg-yellow-500 text-black",
+                          player.finishPosition === 2 &&
+                            "bg-gray-400 text-white",
+                          player.finishPosition === 3 &&
+                            "bg-amber-600 text-white",
+                          player.finishPosition > 3 && "bg-blue-500 text-white",
                         )}
-                      </div>
+                      >
+                        {player.finishPosition === 1
+                          ? "🏆"
+                          : player.finishPosition === 2
+                            ? "🥈"
+                            : player.finishPosition === 3
+                              ? "🥉"
+                              : player.finishPosition}
+                      </Badge>
                     )}
                   </div>
                 </div>
-              );
-            })}
 
-            {/* Center area for game info */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-              <div className="bg-black/40 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/20">
-                <p className="text-white text-sm font-semibold">
-                  Trick {room.currentTrick.length}/4
-                </p>
-                {room.trickLeadSuit && (
-                  <p className="text-yellow-300 text-lg mt-1">
-                    Lead:{" "}
-                    {room.trickLeadSuit === "hearts"
-                      ? "♥️"
-                      : room.trickLeadSuit === "diamonds"
-                        ? "♦️"
-                        : room.trickLeadSuit === "clubs"
-                          ? "♣️"
-                          : "♠️"}
-                  </p>
-                )}
+                {/* Player Card Zone - Below Avatar */}
+                <div
+                  className={cn(
+                    "w-24 h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300",
+                    player.isCurrentTurn
+                      ? "border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-400/20"
+                      : "border-white/20 bg-white/5",
+                  )}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const cardId = e.dataTransfer.getData("text/plain");
+                    if (cardId && myPlayer?.isCurrentTurn)
+                      handleCardDrop(cardId);
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                >
+                  {/* Card or Empty State */}
+                  {playerCards.length > 0 ? (
+                    <div className="relative">
+                      {playerCards.map((card) => (
+                        <PlayingCard
+                          key={card.id}
+                          card={{ ...card, faceUp: true }}
+                          size="sm"
+                          className="border border-white/20"
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-white/60 text-xs">
+                      {player.isCurrentTurn && myPlayer?.id === player.id ? (
+                        <>
+                          <Hand className="w-6 h-6 mx-auto mb-1" />
+                          <p>Play</p>
+                        </>
+                      ) : (
+                        <p>Wait</p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            );
+          })}
+        </div>
+
+        {/* Center Game Info */}
+        <div className="flex justify-center mb-6">
+          <div className="bg-black/40 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/20">
+            <p className="text-white text-sm font-semibold text-center">
+              Trick {room.currentTrick.length}/4
+            </p>
+            {room.trickLeadSuit && (
+              <p className="text-yellow-300 text-lg mt-1 text-center">
+                Lead:{" "}
+                {room.trickLeadSuit === "hearts"
+                  ? "♥️"
+                  : room.trickLeadSuit === "diamonds"
+                    ? "♦️"
+                    : room.trickLeadSuit === "clubs"
+                      ? "♣️"
+                      : "♠️"}
+              </p>
+            )}
           </div>
         </div>
 
@@ -319,7 +291,7 @@ export function GameBoard({
                   if (!suitCards || suitCards.length === 0) return null;
 
                   const suitSymbols = {
-                    hearts: "♥��",
+                    hearts: "♥️",
                     diamonds: "♦️",
                     clubs: "♣️",
                     spades: "♠️",
@@ -342,7 +314,7 @@ export function GameBoard({
                         </span>
                       </div>
 
-                      <div className="flex flex-wrap gap-2">
+                      <div className="grid grid-cols-7 gap-2">
                         {suitCards.map((card) => (
                           <div
                             key={card.id}
