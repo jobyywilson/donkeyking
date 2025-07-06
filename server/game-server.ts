@@ -375,18 +375,43 @@ export class GameServer {
       });
     }
 
-    // Check for win condition (player has no cards left)
-    if (room.players.some((p) => p.cardCount === 0)) {
+    // Check if any player just finished (ran out of cards)
+    const newlyFinishedPlayers = room.players.filter(
+      (p) => p.cardCount === 0 && !p.isFinished,
+    );
+
+    for (const finishedPlayer of newlyFinishedPlayers) {
+      const position = handlePlayerFinish(room.players, finishedPlayer.id);
+      room.finishedPlayers++;
+
+      // Set winner (first place)
+      if (position === 1) {
+        room.winner = finishedPlayer.id;
+        console.log(`🏆 ${finishedPlayer.displayName} is the WINNER!`);
+      }
+
+      // Remove finished player from turn rotation
+      if (finishedPlayer.isCurrentTurn) {
+        room.currentPlayerIndex = GAME_RULES.getNextPlayer(
+          room,
+          room.currentPlayerIndex,
+        );
+        // Update turn status
+        room.players.forEach((p, index) => {
+          p.isCurrentTurn = index === room.currentPlayerIndex;
+        });
+      }
+    }
+
+    // Check if game is over (only one player left with cards)
+    if (GAME_RULES.isGameOver(room.players)) {
       room.gameState = "finished";
-      // Winner is player with no cards
-      room.winner = room.players.find((p) => p.cardCount === 0)?.id;
-      // Donkey is player with most collected cards
-      const maxCollected = Math.max(
-        ...room.players.map((p) => p.collectedCards),
-      );
-      room.donkey = room.players.find(
-        (p) => p.collectedCards === maxCollected,
-      )?.id;
+      room.donkey = GAME_RULES.findLoser(room.players);
+
+      if (room.donkey) {
+        const donkeyPlayer = room.players.find((p) => p.id === room.donkey);
+        console.log(`🐴 ${donkeyPlayer?.displayName} is the DONKEY!`);
+      }
     }
 
     this.broadcastGameStateUpdate(room);
