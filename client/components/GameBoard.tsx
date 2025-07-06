@@ -161,57 +161,93 @@ export function GameBoard({
           ))}
         </div>
 
-        {/* Center Play Area */}
-        <div className="flex-1 flex flex-col justify-center items-center px-4">
-          {/* Current Trick Cards - Horizontal Layout */}
-          <div className="flex justify-center items-center gap-6 mb-8 min-h-[160px]">
-            {room.currentTrick && room.currentTrick.length > 0 ? (
-              room.currentTrick.map((card, index) => (
+        {/* Center Play Area with 4 Player Zones */}
+        <div className="flex-1 flex justify-center items-center px-4">
+          <div className="relative w-96 h-96">
+            {/* Player Zones arranged in a square */}
+            {room.players.map((player, playerIndex) => {
+              const positions = [
+                { top: "10px", left: "50%", transform: "translateX(-50%)" }, // Top
+                { top: "50%", right: "10px", transform: "translateY(-50%)" }, // Right
+                { bottom: "10px", left: "50%", transform: "translateX(-50%)" }, // Bottom
+                { top: "50%", left: "10px", transform: "translateY(-50%)" }, // Left
+              ];
+
+              const playerCards = room.currentTrick.filter(
+                (card, cardIndex) => {
+                  // Map trick cards to players based on play order
+                  const playOrderIndex = (room.trickStartPlayer + cardIndex) % room.players.length;
+                  return playOrderIndex === playerIndex;
+                }
+              );
+
+              return (
                 <div
-                  key={card.id}
-                  className="transform transition-all duration-500 hover:scale-105"
-                  style={{
-                    zIndex: index + 1,
-                    filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.3))",
-                  }}
+                  key={player.id}
+                  className="absolute"
+                  style={positions[playerIndex]}
                 >
-                  <PlayingCard
-                    card={{ ...card, faceUp: true }}
-                    size="lg"
-                    className="border-2 border-white/20"
-                  />
+                  {/* Player Zone */}
+                  <div
+                    className={cn(
+                      "w-24 h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 relative",
+                      player.isCurrentTurn
+                        ? "border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-400/20"
+                        : "border-white/20 bg-white/5",
+                    )}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const cardId = e.dataTransfer.getData("text/plain");
+                      if (cardId && myPlayer?.isCurrentTurn) handleCardDrop(cardId);
+                    }}
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    {/* Player Name Label */}
+                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
+                      <div className="text-xs text-white/80 bg-black/30 px-2 py-1 rounded">
+                        {player.displayName || player.name}
+                      </div>
+                    </div>
+
+                    {/* Card or Empty State */}
+                    {playerCards.length > 0 ? (
+                      <div className="relative">
+                        {playerCards.map((card) => (
+                          <PlayingCard
+                            key={card.id}
+                            card={{ ...card, faceUp: true }}
+                            size="sm"
+                            className="border border-white/20"
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-white/40 text-xs">
+                        {player.isCurrentTurn && myPlayer?.id === player.id ? (
+                          <>
+                            <Hand className="w-6 h-6 mx-auto mb-1" />
+                            <p>Play</p>
+                          </>
+                        ) : (
+                          <p>Waiting</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))
-            ) : (
-              /* Empty Play Area - Drop Zone */
-              <div
-                className={cn(
-                  "w-40 h-56 border-4 border-dashed rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300",
-                  myPlayer?.isCurrentTurn
-                    ? "border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-400/20 animate-pulse"
-                    : "border-white/20 bg-white/5",
-                )}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const cardId = e.dataTransfer.getData("text/plain");
-                  if (cardId) handleCardDrop(cardId);
-                }}
-                onDragOver={(e) => e.preventDefault()}
-              >
-                {myPlayer?.isCurrentTurn ? (
-                  <div className="text-yellow-300">
-                    <Hand className="w-12 h-12 mx-auto mb-3" />
-                    <p className="text-lg font-bold">Play Card</p>
-                    <p className="text-sm opacity-80">Drag or Click</p>
-                  </div>
-                ) : (
-                  <div className="text-white/40">
-                    <p className="text-sm">Waiting...</p>
-                  </div>
-                )}
+              );
+            })}
+
+            {/* Center area for game info */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+              <div className="bg-black/30 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+                <p className="text-white text-sm font-semibold">
+                  Trick {room.currentTrick.length}/4
+                </p>
               </div>
-            )}
+            </div>
           </div>
+        </div>
 
           {/* Lead Suit Indicator */}
           {room.trickLeadSuit && (
