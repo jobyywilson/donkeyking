@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlayingCard } from "@/components/PlayingCard";
 import { Card as GameCard, GameState } from "@shared/game";
-import { Users, Crown, ArrowRight, Hand } from "lucide-react";
+import { Crown, Hand, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface GameBoardProps {
@@ -50,246 +49,289 @@ export function GameBoard({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              Indian Donkey
-            </h1>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">Room: {room.id}</Badge>
-              <Badge
-                variant={myPlayer?.isCurrentTurn ? "default" : "secondary"}
-                className="flex items-center gap-1"
-              >
-                <Hand className="w-3 h-3" />
-                {myPlayer?.isCurrentTurn
-                  ? "Your Turn"
-                  : `${currentPlayer?.displayName || currentPlayer?.name || "Unknown"}'s Turn`}
-              </Badge>
-            </div>
+    <div className="min-h-screen bg-green-800 relative overflow-hidden">
+      {/* Felt texture pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-green-700 to-green-900"></div>
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)`,
+          backgroundSize: "30px 30px",
+        }}
+      ></div>
+
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Top Header with Leave Button */}
+        <div className="flex justify-between items-center p-4">
+          <div className="flex items-center gap-3">
+            <Badge
+              variant="outline"
+              className="bg-black/20 text-white border-white/30 backdrop-blur-sm"
+            >
+              Room: {room.id}
+            </Badge>
+            <Badge
+              className={cn(
+                "flex items-center gap-1 backdrop-blur-sm",
+                myPlayer?.isCurrentTurn
+                  ? "bg-yellow-500 text-black font-bold animate-pulse"
+                  : "bg-black/20 text-white border-white/30",
+              )}
+            >
+              <Hand className="w-3 h-3" />
+              {myPlayer?.isCurrentTurn
+                ? "Your Turn"
+                : `${currentPlayer?.displayName || currentPlayer?.name || "Unknown"}'s Turn`}
+            </Badge>
           </div>
 
           <Button
             onClick={onLeaveRoom}
             variant="destructive"
-            className="mt-4 lg:mt-0"
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6"
           >
             Leave Game
           </Button>
         </div>
 
-        {/* Players Bar */}
-        <Card className="p-4 mb-6 bg-white/90 backdrop-blur-sm">
-          <div className="flex flex-wrap gap-4 justify-center">
-            {room.players.map((player, index) => (
+        {/* Player Avatars at Top */}
+        <div className="flex justify-center gap-12 mb-8 px-4">
+          {room.players.map((player, index) => (
+            <div
+              key={player.id}
+              className={cn(
+                "flex flex-col items-center gap-2 transition-all duration-300",
+                player.isCurrentTurn && "scale-110",
+              )}
+            >
+              {/* Player Avatar Circle */}
               <div
-                key={player.id}
                 className={cn(
-                  "flex items-center gap-2 p-3 rounded-lg border",
+                  "w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-xl border-4 shadow-lg transition-all duration-300",
                   player.isCurrentTurn
-                    ? "bg-primary/20 border-primary"
-                    : "bg-gray-50 border-gray-200",
-                  player.id === myId && "ring-2 ring-offset-2 ring-accent",
+                    ? "bg-yellow-500 border-yellow-300 text-black shadow-yellow-300/50"
+                    : "bg-blue-600 border-blue-400 shadow-blue-600/30",
+                  player.id === myId &&
+                    "ring-4 ring-purple-400 ring-offset-4 ring-offset-transparent",
+                  player.isFinished && "bg-gray-500 border-gray-400 opacity-75",
                 )}
               >
-                {player.isHost && <Crown className="w-4 h-4 text-yellow-500" />}
-                <span className="font-medium">
+                {(player.displayName || player.name || "?")[0].toUpperCase()}
+              </div>
+
+              {/* Player Name and Info */}
+              <div className="text-center">
+                <div className="text-white font-bold text-sm flex items-center justify-center gap-1">
                   {player.displayName || player.name}
-                </span>
-                <Badge variant="outline">{player.cardCount} cards</Badge>
-                {player.isFinished && player.finishPosition && (
+                  {player.isHost && (
+                    <Crown className="w-3 h-3 text-yellow-400" />
+                  )}
+                </div>
+                <div className="flex gap-1 justify-center mt-1">
                   <Badge
-                    variant="default"
-                    className={cn(
-                      "font-bold",
-                      player.finishPosition === 1 && "bg-yellow-500 text-white",
-                      player.finishPosition === 2 && "bg-gray-400 text-white",
-                      player.finishPosition === 3 && "bg-amber-600 text-white",
-                      player.finishPosition > 3 && "bg-blue-500 text-white",
-                    )}
+                    variant="outline"
+                    className="bg-black/30 text-white border-white/40 text-xs px-2 py-0"
                   >
-                    {player.finishPosition === 1
-                      ? "🏆 1st"
-                      : player.finishPosition === 2
-                        ? "🥈 2nd"
-                        : player.finishPosition === 3
-                          ? "🥉 3rd"
-                          : `${player.finishPosition}th`}
+                    {player.cardCount}
                   </Badge>
-                )}
-                {!player.isFinished && player.collectedCards > 0 && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-orange-100 text-orange-700"
-                  >
-                    {player.collectedCards} collected
-                  </Badge>
-                )}
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Center Table */}
-        <Card className="p-6 mb-6 bg-green-100 backdrop-blur-sm border-2 border-dashed border-green-400">
-          <h3 className="text-lg font-semibold mb-4 text-center text-green-800">
-            Center Table
-            {room.trickLeadSuit && (
-              <div className="text-sm font-normal text-green-600 mt-1">
-                Lead Suit: {room.trickLeadSuit}{" "}
-                {room.trickLeadSuit === "hearts"
-                  ? "♥"
-                  : room.trickLeadSuit === "diamonds"
-                    ? "♦"
-                    : room.trickLeadSuit === "clubs"
-                      ? "♣"
-                      : "♠"}
-              </div>
-            )}
-          </h3>
-
-          {/* Current Trick */}
-          {room.currentTrick && room.currentTrick.length > 0 && (
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-green-700 mb-2 text-center">
-                Current Trick
-              </h4>
-              <div className="flex justify-center gap-2 flex-wrap">
-                {room.currentTrick.map((card, index) => (
-                  <PlayingCard
-                    key={card.id}
-                    card={{ ...card, faceUp: true }}
-                    size="sm"
-                    className="transform rotate-12"
-                    style={{ transform: `rotate(${index * 15 - 20}deg)` }}
-                  />
-                ))}
+                  {player.isFinished && player.finishPosition && (
+                    <Badge
+                      className={cn(
+                        "font-bold text-xs px-2 py-0",
+                        player.finishPosition === 1 &&
+                          "bg-yellow-500 text-black",
+                        player.finishPosition === 2 && "bg-gray-400 text-white",
+                        player.finishPosition === 3 &&
+                          "bg-amber-600 text-white",
+                        player.finishPosition > 3 && "bg-blue-500 text-white",
+                      )}
+                    >
+                      {player.finishPosition === 1
+                        ? "🏆"
+                        : player.finishPosition === 2
+                          ? "🥈"
+                          : player.finishPosition === 3
+                            ? "🥉"
+                            : player.finishPosition}
+                    </Badge>
+                  )}
+                </div>
               </div>
             </div>
-          )}
+          ))}
+        </div>
 
-          {/* Drop Zone */}
-          <div
-            className={cn(
-              "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
-              myPlayer?.isCurrentTurn
-                ? "border-green-500 bg-green-50 hover:bg-green-100"
-                : "border-gray-300 bg-gray-50",
-            )}
-            onDrop={(e) => {
-              e.preventDefault();
-              const cardId = e.dataTransfer.getData("text/plain");
-              if (cardId) handleCardDrop(cardId);
-            }}
-            onDragOver={(e) => e.preventDefault()}
-          >
-            {myPlayer?.isCurrentTurn ? (
-              <div className="text-green-700">
-                <Hand className="w-8 h-8 mx-auto mb-2" />
-                <p className="font-medium">Your Turn!</p>
-                <p className="text-sm">Drag a card here or click to play</p>
-              </div>
+        {/* Center Play Area */}
+        <div className="flex-1 flex flex-col justify-center items-center px-4">
+          {/* Current Trick Cards - Horizontal Layout */}
+          <div className="flex justify-center items-center gap-6 mb-8 min-h-[160px]">
+            {room.currentTrick && room.currentTrick.length > 0 ? (
+              room.currentTrick.map((card, index) => (
+                <div
+                  key={card.id}
+                  className="transform transition-all duration-500 hover:scale-105"
+                  style={{
+                    zIndex: index + 1,
+                    filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.3))",
+                  }}
+                >
+                  <PlayingCard
+                    card={{ ...card, faceUp: true }}
+                    size="lg"
+                    className="border-2 border-white/20"
+                  />
+                </div>
+              ))
             ) : (
-              <div className="text-gray-500">
-                <p>
-                  Waiting for{" "}
-                  {currentPlayer?.displayName ||
-                    currentPlayer?.name ||
-                    "next player"}
-                  's turn...
-                </p>
+              /* Empty Play Area - Drop Zone */
+              <div
+                className={cn(
+                  "w-40 h-56 border-4 border-dashed rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300",
+                  myPlayer?.isCurrentTurn
+                    ? "border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-400/20 animate-pulse"
+                    : "border-white/20 bg-white/5",
+                )}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const cardId = e.dataTransfer.getData("text/plain");
+                  if (cardId) handleCardDrop(cardId);
+                }}
+                onDragOver={(e) => e.preventDefault()}
+              >
+                {myPlayer?.isCurrentTurn ? (
+                  <div className="text-yellow-300">
+                    <Hand className="w-12 h-12 mx-auto mb-3" />
+                    <p className="text-lg font-bold">Play Card</p>
+                    <p className="text-sm opacity-80">Drag or Click</p>
+                  </div>
+                ) : (
+                  <div className="text-white/40">
+                    <p className="text-sm">Waiting...</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
-        </Card>
 
-        {/* Action Button */}
-        {myPlayer?.isCurrentTurn && selectedCard && (
-          <Card className="p-4 mb-6 bg-white/90 backdrop-blur-sm">
-            <div className="flex justify-center">
+          {/* Lead Suit Indicator */}
+          {room.trickLeadSuit && (
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl px-6 py-3 mb-6 border border-white/20">
+              <p className="text-white text-center font-semibold">
+                Lead Suit:{" "}
+                <span className="text-yellow-300 text-xl ml-2">
+                  {room.trickLeadSuit === "hearts"
+                    ? "♥️"
+                    : room.trickLeadSuit === "diamonds"
+                      ? "♦️"
+                      : room.trickLeadSuit === "clubs"
+                        ? "♣️"
+                        : "♠️"}
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Player Hand - Fanned Cards at Bottom */}
+        <div className="bg-gradient-to-t from-black/40 to-transparent pt-8 pb-6">
+          {/* Action Button */}
+          {myPlayer?.isCurrentTurn && selectedCard && (
+            <div className="flex justify-center mb-6">
               <Button
                 onClick={handlePlayCard}
-                className="flex items-center gap-2"
+                className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-4 rounded-2xl shadow-lg text-lg border-2 border-yellow-300 transform hover:scale-105 transition-all duration-200"
               >
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-6 h-6 mr-2" />
                 Play Selected Card
               </Button>
             </div>
-          </Card>
-        )}
-
-        {/* My Cards */}
-        <Card className="p-6 bg-white/90 backdrop-blur-sm">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Hand className="w-5 h-5" />
-            My Cards ({myCards.length})
-          </h3>
-
-          {myCards.length > 0 ? (
-            <div className="flex flex-wrap gap-3 justify-center">
-              {myCards.map((card) => (
-                <div
-                  key={card.id}
-                  draggable={myPlayer?.isCurrentTurn}
-                  onDragStart={(e) => {
-                    if (myPlayer?.isCurrentTurn) {
-                      e.dataTransfer.setData("text/plain", card.id);
-                    }
-                  }}
-                  className={cn(
-                    "transition-all duration-200",
-                    myPlayer?.isCurrentTurn &&
-                      "cursor-grab active:cursor-grabbing",
-                    selectedCard === card.id && "transform scale-105",
-                  )}
-                >
-                  <PlayingCard
-                    card={{
-                      ...card,
-                      faceUp: true,
-                      selected: selectedCard === card.id,
-                    }}
-                    onClick={() => handleCardClick(card.id)}
-                    size="md"
-                    className={cn(
-                      "transition-all duration-200",
-                      selectedCard === card.id &&
-                        "ring-2 ring-primary ring-offset-2",
-                      !myPlayer?.isCurrentTurn && "opacity-75 grayscale",
-                    )}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              <Hand className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">No cards remaining!</p>
-              <p>Wait for the game to finish...</p>
-            </div>
           )}
-        </Card>
 
-        {/* Game Instructions */}
-        <div className="mt-8 text-center">
-          <Card className="p-6 bg-white/10 backdrop-blur-sm border-white/20 max-w-2xl mx-auto">
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              Quick Help
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
-              <div className="space-y-2">
-                <div>• Follow the lead suit if you can</div>
-                <div>• Play any card if you can't match</div>
+          {/* My Cards - Fanned Layout */}
+          <div className="relative h-36 mx-4">
+            {myCards.length > 0 ? (
+              <div className="relative flex justify-center">
+                {myCards.map((card, index) => {
+                  const totalCards = myCards.length;
+                  const maxSpread = Math.min(totalCards * 25, 400); // Max spread width
+                  const cardSpacing =
+                    totalCards > 1 ? maxSpread / (totalCards - 1) : 0;
+                  const xPosition =
+                    totalCards > 1 ? index * cardSpacing - maxSpread / 2 : 0;
+                  const rotation =
+                    totalCards > 1 ? (index / (totalCards - 1) - 0.5) * 45 : 0; // Fan effect
+                  const yOffset = Math.abs(rotation) * 0.8; // Slight arc effect
+
+                  return (
+                    <div
+                      key={card.id}
+                      className={cn(
+                        "absolute transition-all duration-300 cursor-pointer",
+                        selectedCard === card.id &&
+                          "z-40 scale-110 -translate-y-12",
+                        myPlayer?.isCurrentTurn
+                          ? "hover:z-30 hover:scale-105 hover:-translate-y-6"
+                          : "opacity-60",
+                      )}
+                      style={{
+                        left: `calc(50% + ${xPosition}px)`,
+                        transform: `translateX(-50%) translateY(${selectedCard === card.id ? -20 : yOffset}px) rotate(${rotation}deg)`,
+                        zIndex: selectedCard === card.id ? 40 : 10 + index,
+                        filter:
+                          selectedCard === card.id
+                            ? "drop-shadow(0 20px 40px rgba(255,255,0,0.3))"
+                            : "drop-shadow(0 8px 16px rgba(0,0,0,0.3))",
+                      }}
+                      draggable={myPlayer?.isCurrentTurn}
+                      onDragStart={(e) => {
+                        if (myPlayer?.isCurrentTurn) {
+                          e.dataTransfer.setData("text/plain", card.id);
+                        }
+                      }}
+                    >
+                      <PlayingCard
+                        card={{
+                          ...card,
+                          faceUp: true,
+                          selected: selectedCard === card.id,
+                        }}
+                        onClick={() => handleCardClick(card.id)}
+                        size="md"
+                        className={cn(
+                          "transition-all duration-300 border border-white/20",
+                          selectedCard === card.id &&
+                            "ring-4 ring-yellow-400 ring-offset-2 ring-offset-transparent border-yellow-400",
+                          myPlayer?.isCurrentTurn && "hover:border-yellow-300",
+                        )}
+                      />
+                    </div>
+                  );
+                })}
               </div>
-              <div className="space-y-2">
-                <div>• Highest card of lead suit wins trick</div>
-                <div>• First to empty hand wins!</div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-black/30 backdrop-blur-sm rounded-2xl p-8 mx-auto max-w-sm border border-white/20">
+                  <Hand className="w-16 h-16 mx-auto mb-4 text-white/60" />
+                  <p className="text-white font-bold text-xl">
+                    No cards remaining!
+                  </p>
+                  <p className="text-white/80 text-sm mt-2">
+                    Waiting for game to finish...
+                  </p>
+                </div>
               </div>
-            </div>
-          </Card>
+            )}
+          </div>
+
+          {/* Fast-Paced Gameplay Text */}
+          <div className="text-center mt-8">
+            <p
+              className="text-yellow-400 font-black text-2xl tracking-widest uppercase"
+              style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+            >
+              FAST-PACED GAMEPLAY!
+            </p>
+          </div>
         </div>
       </div>
     </div>
