@@ -64,44 +64,71 @@ export function GameOver({ gameState, onPlayAgain, onGoHome }: GameOverProps) {
 
           {/* Game Results */}
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Final Results</h2>
+            <h2 className="text-2xl font-semibold mb-4">Final Rankings</h2>
 
             <div className="space-y-3">
-              {/* Winner */}
-              {winner && (
-                <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Trophy className="w-6 h-6 text-green-600" />
-                    <span className="font-semibold text-green-800">
-                      {winner.displayName}
-                    </span>
-                  </div>
-                  <Badge className="bg-green-500 text-white">Winner!</Badge>
-                </div>
-              )}
-
-              {/* Other Players */}
+              {/* Show all players in finish order */}
               {room.players
-                .filter((p) => p.id !== room.winner && p.id !== room.donkey)
-                .sort((a, b) => a.cardCount - b.cardCount)
-                .map((player, index) => (
+                .filter((p) => p.isFinished)
+                .sort(
+                  (a, b) =>
+                    (a.finishPosition || 999) - (b.finishPosition || 999),
+                )
+                .map((player) => (
                   <div
                     key={player.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg"
+                    className={cn(
+                      "flex items-center justify-between p-4 border rounded-lg",
+                      player.finishPosition === 1 &&
+                        "bg-yellow-50 border-yellow-200",
+                      player.finishPosition === 2 &&
+                        "bg-gray-50 border-gray-200",
+                      player.finishPosition === 3 &&
+                        "bg-amber-50 border-amber-200",
+                      (player.finishPosition || 0) > 3 &&
+                        "bg-blue-50 border-blue-200",
+                    )}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm font-bold text-gray-700">
-                        {index + 2}
+                      {player.finishPosition === 1 && (
+                        <Trophy className="w-6 h-6 text-yellow-600" />
+                      )}
+                      {player.finishPosition === 2 && (
+                        <span className="text-2xl">🥈</span>
+                      )}
+                      {player.finishPosition === 3 && (
+                        <span className="text-2xl">🥉</span>
+                      )}
+                      {(player.finishPosition || 0) > 3 && (
+                        <span className="w-6 h-6 bg-blue-300 rounded-full flex items-center justify-center text-sm font-bold text-blue-700">
+                          {player.finishPosition}
+                        </span>
+                      )}
+                      <span className="font-semibold">
+                        {player.displayName}
                       </span>
-                      <span className="font-medium">{player.displayName}</span>
                     </div>
-                    <Badge variant="outline">
-                      {player.cardCount} cards left
+                    <Badge
+                      className={cn(
+                        "text-white",
+                        player.finishPosition === 1 && "bg-yellow-500",
+                        player.finishPosition === 2 && "bg-gray-400",
+                        player.finishPosition === 3 && "bg-amber-600",
+                        (player.finishPosition || 0) > 3 && "bg-blue-500",
+                      )}
+                    >
+                      {player.finishPosition === 1
+                        ? "Winner!"
+                        : player.finishPosition === 2
+                          ? "2nd Place"
+                          : player.finishPosition === 3
+                            ? "3rd Place"
+                            : `${player.finishPosition}th Place`}
                     </Badge>
                   </div>
                 ))}
 
-              {/* Donkey */}
+              {/* Donkey (last player with cards) */}
               {donkey && (
                 <div className="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg">
                   <div className="flex items-center gap-3">
@@ -110,7 +137,7 @@ export function GameOver({ gameState, onPlayAgain, onGoHome }: GameOverProps) {
                       {donkey.displayName}
                     </span>
                   </div>
-                  <Badge className="bg-red-500 text-white">Donkey</Badge>
+                  <Badge className="bg-red-500 text-white">Donkey 🐴</Badge>
                 </div>
               )}
             </div>
