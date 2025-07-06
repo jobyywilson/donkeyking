@@ -60,8 +60,18 @@ export function getNextPlayerIndex(
   room: GameRoom,
   currentIndex: number,
 ): number {
-  // Standard clockwise rotation
-  return (currentIndex + 1) % room.players.length;
+  const players = room.players;
+  let nextIndex = (currentIndex + 1) % players.length;
+
+  // Skip finished players (those with no cards)
+  let attempts = 0;
+  while (players[nextIndex].isFinished && attempts < players.length) {
+    nextIndex = (nextIndex + 1) % players.length;
+    attempts++;
+  }
+
+  // If all remaining players are finished, return current index
+  return attempts >= players.length ? currentIndex : nextIndex;
 }
 
 /**
@@ -162,23 +172,46 @@ export function shouldPlayerCollectCards(
  * Define how the game ends and who wins/loses
  */
 export function checkGameOver(players: Player[]): boolean {
-  // Game ends when any player runs out of cards
-  return players.some((player) => player.cardCount === 0);
+  // Game ends only when only ONE player has cards left (the donkey)
+  const playersWithCards = players.filter((player) => player.cardCount > 0);
+  return playersWithCards.length <= 1;
 }
 
 export function findGameWinner(players: Player[]): string | undefined {
-  // Winner is the first player to get rid of all their cards
-  const winner = players.find((player) => player.cardCount === 0);
+  // Winner is the first player who finished (finishPosition = 1)
+  const winner = players.find((player) => player.finishPosition === 1);
   return winner?.id;
 }
 
 export function findGameLoser(players: Player[]): string | undefined {
-  // Loser (Donkey) is the player who collected the most cards
-  const maxCollected = Math.max(...players.map((p) => p.collectedCards));
-  const loser = players.find(
-    (player) => player.collectedCards === maxCollected,
+  // Loser (Donkey) is the last player who still has cards
+  const playersWithCards = players.filter((player) => player.cardCount > 0);
+  return playersWithCards.length === 1 ? playersWithCards[0].id : undefined;
+}
+
+/**
+ * PLAYER FINISHING LOGIC
+ * Handle when a player runs out of cards
+ */
+export function handlePlayerFinish(
+  players: Player[],
+  finishedPlayerId: string,
+): number {
+  const finishedPlayer = players.find((p) => p.id === finishedPlayerId);
+  if (!finishedPlayer) return 0;
+
+  // Calculate finish position (1st, 2nd, 3rd, etc.)
+  const currentFinishedCount = players.filter((p) => p.isFinished).length;
+  const position = currentFinishedCount + 1;
+
+  // Update player status
+  finishedPlayer.isFinished = true;
+  finishedPlayer.finishPosition = position;
+
+  console.log(
+    `${finishedPlayer.displayName} finished in position ${position}!`,
   );
-  return loser?.id;
+  return position;
 }
 
 /**
